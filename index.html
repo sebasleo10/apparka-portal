@@ -37377,10 +37377,13 @@
                         });
                     }
                     dArr.forEach(x => {
-                        const rSin = (x.real_sin !== undefined) ? x.real_sin : (x.real_sin_igv || 0);
-                        const pDia = (x.ppto !== undefined) ? x.ppto : (x.ppto_dia || 0);
-                        totReal += rSin;
-                        totPpto += pDia;
+                        const isEvaluado = (x.dia_num <= diaCorte);
+                        if (isEvaluado) {
+                            const rSin = (x.real_sin !== undefined) ? x.real_sin : (x.real_sin_igv || 0);
+                            const pDia = (x.ppto !== undefined) ? x.ppto : (x.ppto_dia || 0);
+                            totReal += rSin;
+                            totPpto += pDia;
+                        }
                     });
                 });
                 proyList.forEach(p => totProy += (p.proy_fin_mes || 0));
@@ -37669,11 +37672,8 @@
                     const rSin = dObj ? (dObj.real_sin !== undefined ? dObj.real_sin : (dObj.real_sin_igv || 0)) : 0;
                     const pDia = dObj ? (dObj.ppto !== undefined ? dObj.ppto : (dObj.ppto_dia || 0)) : 0;
 
-                    // Comparación papas con papas hasta la fecha de corte (al día anterior)
-                    if (semVal !== 'ALL' || diaSemVal !== 'ALL') {
-                        pptoTot += pDia;
-                        realTot += rSin;
-                    } else if (isEvaluado) {
+                    // Comparación papas con papas hasta la fecha de corte: solo días evaluados concluidos
+                    if (isEvaluado) {
                         pptoTot += pDia;
                         realTot += rSin;
                     }
@@ -37686,11 +37686,9 @@
                         const colorDif = dif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)';
                         difHtml = `<span style="color:${colorDif}; font-weight:700;">${dif >= 0 ? '+' : ''}${fmt(dif)}</span>`;
                     } else {
-                        // Día posterior a la fecha de corte: desvío sale 0
+                        // Día posterior a la fecha de corte (o sin datos concluidos): desvío sale estrictamente 0.00
                         difHtml = `<span style="color:#94a3b8; font-weight:600;">0.00</span>`;
-                        if (rSin === 0) {
-                            realValHtml = `<span style="color:#94a3b8;">0.00</span>`;
-                        }
+                        realValHtml = `<span style="color:#94a3b8;">${rSin > 0 ? fmt(rSin) : '0.00'}</span>`;
                     }
 
                     rowsDias += `<tr>
