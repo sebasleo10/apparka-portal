@@ -12,8 +12,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script src="portal_ppto_data.js?v=1791236483"></script>
-    <script src="portal_comments_data.js?v=1791236483"></script>
+    <script src="portal_ppto_data.js?v=1791236812"></script>
+    <script src="portal_comments_data.js?v=1791236812"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
@@ -37270,6 +37270,8 @@
             const mData = allMonthsData[mKey];
             if (!mData) return;
 
+            const diaCorte = mData.dia_corte || (mData.dias_eval ? mData.dias_eval.length : 31);
+
             let beaches = mData.daily_data || [];
             let proyList = mData.proy_data || [];
 
@@ -37343,8 +37345,10 @@
                             });
                         }
                         dArr.forEach(x => {
-                            rTot += (x.real_sin !== undefined) ? x.real_sin : (x.real_sin_igv || 0);
-                            pTot += (x.ppto !== undefined) ? x.ppto : (x.ppto_dia || 0);
+                            if (x.dia_num <= diaCorte) {
+                                rTot += (x.real_sin !== undefined) ? x.real_sin : (x.real_sin_igv || 0);
+                                pTot += (x.ppto !== undefined) ? x.ppto : (x.ppto_dia || 0);
+                            }
                         });
                     }
                     const dif = rTot - pTot;
