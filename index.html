@@ -12,8 +12,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script src="portal_ppto_data.js?v=1792075154"></script>
-    <script src="portal_comments_data.js?v=1792075154"></script>
+    <script src="portal_ppto_data.js?v=1792077242"></script>
+    <script src="portal_comments_data.js?v=1792077242"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
@@ -1209,7 +1209,7 @@
                 <span class="master-brand-logo">APPARKA</span>
                 <div class="master-brand-titles">
                     <h1>Portal Gerencial Consolidado de Operaciones</h1>
-                    <p>Gerencia General & Directorio · Actualización Automática Diaria 09:00 AM</p>
+                    <p id="portalSubheader">Gerencia General & Directorio · Información oficial consolidada al 14 de Octubre 2026</p>
                 </div>
             </div>
 
@@ -47657,11 +47657,13 @@
             const curVal = selFecha.value;
             selFecha.innerHTML = '<option value="ALL">Todas las Fechas (Día a Día)</option>';
 
+            const diaCorte = mData.dia_corte || (mData.dias_eval ? mData.dias_eval.length : 31);
             const dias = mData.dias_eval || [];
             dias.forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = String(d.dia_num);
-                opt.textContent = `${d.dia_num} de ${mData.mes_str} (${d.nombre})`;
+                const isCorte = (d.dia_num === diaCorte);
+                opt.textContent = `${d.dia_num} de ${mData.mes_str} (${d.nombre})${isCorte ? ' ★ (Ayer / Cierre)' : ''}`;
                 selFecha.appendChild(opt);
             });
 
@@ -47969,8 +47971,13 @@
                 document.getElementById('kpiRealSub').textContent = `Todos los ${dNombres[diaSemVal]} evaluados`;
                 document.getElementById('kpiPptoSub').textContent = `Meta de ${dNombres[diaSemVal]} evaluados`;
             } else {
-                document.getElementById('kpiRealSub').textContent = 'Días evaluados acumulados';
-                document.getElementById('kpiPptoSub').textContent = 'Meta proporcional acumulada';
+                document.getElementById('kpiRealSub').textContent = `Días 1 al ${diaCorte} de ${mData.mes_str} (Acumulado)`;
+                document.getElementById('kpiPptoSub').textContent = `Meta proporcional al ${diaCorte} de ${mData.mes_str}`;
+            }
+
+            const pSub = document.getElementById('portalSubheader');
+            if (pSub && mData) {
+                pSub.textContent = `Gerencia General & Directorio · Información oficial consolidada al ${diaCorte} de ${mData.mes_str} 2026`;
             }
 
             const cardDif = document.getElementById('kpiCardDif');
@@ -48023,7 +48030,10 @@
             const diaCorte = mData.dia_corte || (mData.dias_eval ? mData.dias_eval.length : 31);
             let hHtml = `<th>#</th><th>Playa</th><th>Zona / Admin</th><th>Tipo</th><th>PPTO Período (S/)</th><th>Real Período (S/)</th><th>Desvío (S/)</th><th>% Cump.</th>`;
             dias.forEach(d => {
-                hHtml += `<th>${d.fecha_str}<br><span style="font-weight:normal;font-size:10px;">${d.nombre}</span></th>`;
+                const isCorte = (d.dia_num === diaCorte);
+                const thStyle = isCorte ? 'background:#FCE7F3; color:#1B1462; border-bottom:3px solid #ED2579;' : '';
+                const tagCorte = isCorte ? '<br><span style="background:#ED2579; color:#fff; font-size:9px; padding:1px 5px; border-radius:3px; font-weight:800;">AYER</span>' : '';
+                hHtml += `<th style="${thStyle}">${d.fecha_str}<br><span style="font-weight:normal;font-size:10px;">${d.nombre}</span>${tagCorte}</th>`;
             });
             thead.innerHTML = hHtml;
 
