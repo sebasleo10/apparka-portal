@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apparka | Portal Gerencial de EERR & Eventuales — Setiembre 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --navy: #1B1462;
+            --navy-light: #2A217A;
+            --navy-dark: #120D45;
+            --pink: #ED2579;
+            --pink-hover: #c41860;
+            --pink-light: #FCE7F3;
+            --purple: #8A34B4;
+            --purple-light: #F4E8F8;
+            --bg-main: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            --border-light: #E2E8F0;
+            --green: #059669;
+            --green-dark: #15803d;
+            --green-bg: #DCFCE7;
+            --red: #DC2626;
+            --red-dark: #B91C1C;
+            --red-bg: #FEE2E2;
+            --blue: #2563EB;
+            --blue-bg: #EFF6FF;
+            --amber: #D97706;
+            --amber-bg: #FEF3C7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.45;
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* MASTER NAVBAR (SLIM, NON-INVASIVE) */
+        .master-navbar {
+            background: var(--navy);
+            color: #ffffff;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2.5px solid var(--pink);
+            box-shadow: 0 2px 10px rgba(18, 13, 69, 0.15);
+            /* NOT STICKY: Everything scrolls naturally */
+            position: relative;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-logo {
+            background: var(--pink);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            padding: 5px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .brand-titles h1 {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .brand-titles p {
+            font-size: 11px;
+            color: #CBD5E1;
+            margin: 1px 0 0 0;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffffff;
+        }
+
+        .btn-action.primary {
+            background: var(--pink);
+            border-color: var(--pink);
+        }
+
+        .btn-action.primary:hover {
+            background: var(--pink-hover);
+        }
+
+        /* MAIN CONTENT LAYOUT */
+        .main-container {
+            max-width: 1520px;
+            margin: 0 auto;
+            padding: 18px 24px 60px 24px;
+        }
+
+        /* FILTER PANEL (HORIZONTAL COMPACT, NOT STICKY) */
+        .filter-panel {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+            position: relative; /* SCROLLS NATURALLY */
+        }
+
+        .filters-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--navy);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .filter-select, .filter-input {
+            height: 32px;
+            padding: 0 10px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            background-color: #ffffff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 2px rgba(237, 37, 121, 0.15);
+        }
+
+        .filter-input {
+            min-width: 170px;
+        }
+
+        .btn-reset {
+            height: 32px;
+            padding: 0 12px;
+            background: #F1F5F9;
+            color: var(--navy);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 11.5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-reset:hover {
+            background: #E2E8F0;
+            color: var(--pink);
+        }
+
+        /* TABS NAVIGATION (CLEAN PILLS) */
+        .tabs-nav {
+            display: flex;
+            gap: 6px;
+            background: #ffffff;
+            padding: 5px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 18px;
+            overflow-x: auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: #F1F5F9;
+            color: var(--navy);
+        }
+
+        .tab-btn.active {
+            background: var(--navy);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(27, 20, 98, 0.2);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* MACRO KPIS CONTAINER (4 x 2 Symmetrical Grid) */
+        .macro-kpis-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 1150px) {
+            .macro-kpis-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .macro-kpis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3.5px;
+            background: var(--navy);
+        }
+
+        .kpi-card.pink::before { background: var(--pink); }
+        .kpi-card.purple::before { background: var(--purple); }
+        .kpi-card.green::before { background: var(--green); }
+        .kpi-card.red::before { background: var(--red); }
+        .kpi-card.blue::before { background: var(--blue); }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .kpi-title {
+            font-size: 10.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.4px;
+        }
+
+        .kpi-pill {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: #F1F5F9;
+            color: var(--text-muted);
+        }
+
+        .kpi-pill.pill-green { background: var(--green-bg); color: var(--green-dark); }
+        .kpi-pill.pill-red { background: var(--red-bg); color: var(--red-dark); }
+        .kpi-pill.pill-blue { background: var(--blue-bg); color: var(--blue); }
+
+        .kpi-val {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--text-dark);
+            letter-spacing: -0.4px;
+            margin-bottom: 3px;
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* TOP 3 WIDGETS SECTION */
+        .top3-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .top3-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .top3-box {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .top3-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid var(--border-light);
+        }
+
+        .top3-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .top3-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .top3-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 8px;
+            background: #F8FAFC;
+            border-radius: 6px;
+            font-size: 11.5px;
+        }
+
+        .top3-item-name {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .top3-item-val {
+            font-weight: 800;
+            text-align: right;
+        }
+
+        /* TABLES STYLES */
+        .card-table-section {
+            background: #ffffff;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+
+        .table-header-bar {
+            background: #ffffff;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* PERMANENCE LEYEND CONTAINER */
+        .permanence-legend-bar {
+            background: #F8FAFC;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 11px;
+            flex-wrap: wrap;
+        }
+
+        .legend-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .apparka-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .apparka-table th {
+            background: var(--navy);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 9px 12px;
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: center;
+            /* Header freezes ONLY inside its table container when scrolling horizontally/vertically */
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .apparka-table th.sub-th {
+            background: #2A1B82;
+            font-size: 9px;
+        }
+
+        .apparka-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid #F8FAFC;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .apparka-table tbody tr:hover {
+            background-color: #F1F5F9;
+        }
+
+        .apparka-table tbody tr:nth-child(even) {
+            background-color: #FAFCFE;
+        }
+
+        .text-left { text-align: left !important; }
+        .text-right { text-align: right !important; }
+        .text-center { text-align: center !important; }
+        .font-bold { font-weight: 700 !important; }
+
+        /* BADGES */
+        .badge-status {
+            display: inline-block;
+            padding: 2.5px 7px;
+            border-radius: 10px;
+            font-size: 10.5px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .badge-green { background: var(--green-bg); color: var(--green-dark); }
+        .badge-red { background: var(--red-bg); color: var(--red-dark); }
+        .badge-blue { background: var(--blue-bg); color: var(--blue); }
+        .badge-gray { background: #F1F5F9; color: var(--text-muted); }
+
+        /* PERMANENCE PROGRESS BARS IN ROWS */
+        .perm-cell-wrapper {
+            min-width: 175px;
+            padding: 2px 2px;
+        }
+
+        .perm-segmented-bar {
+            display: flex;
+            height: 13px;
+            border-radius: 3px;
+            overflow: hidden;
+            background: #E2E8F0;
+            margin-bottom: 3px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        .perm-numbers-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .perm-labels-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* TOTALS ROW */
+        .total-row {
+            background: #0F172A !important;
+            color: #ffffff !important;
+            font-weight: 800;
+            border-top: 2px solid var(--pink);
+        }
+
+        .total-row td {
+            color: #ffffff !important;
+            border-color: #1E293B !important;
+        }
+
+        /* COMMENTS GRID */
+        .comments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+            gap: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .comments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comment-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .comment-card.border-loss {
+            border-left: 4px solid var(--red);
+        }
+
+        .comment-card.border-gain {
+            border-left: 4px solid var(--green);
+        }
+
+        .comment-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comment-beach {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .comment-meta {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .comment-box {
+            background: #F8FAFC;
+            padding: 9px 11px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: #1E293B;
+            border: 1px solid #EEF2F6;
+        }
+
+        .comment-box-title {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* FLOATING SCROLL-TO-TOP BUTTON */
+        .btn-scroll-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: #ffffff;
+            border: 2px solid var(--pink);
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(27, 20, 98, 0.3);
+            z-index: 999;
+            transition: all 0.2s;
+        }
+
+        .btn-scroll-top:hover {
+            background: var(--pink);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MASTER NAVBAR -->
+    <header class="master-navbar">
+        <div class="brand-group">
+            <span class="brand-logo">APPARKA</span>
+            <div class="brand-titles">
+                <h1>Reporte Gerencial Consolidado de EERR & Eventuales — Setiembre 2026</h1>
+                <p>Auditoría de Resultados Mensuales y Métricas Operacionales • Gerencia General & Directorio</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-action" onclick="exportToExcel()">
+                📥 Exportar Excel
+            </button>
+            <button class="btn-action primary" onclick="window.print()">
+                🖨️ Imprimir / PDF
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="main-container">
+
+        <!-- HORIZONTAL COMPACT FILTER PANEL (NOT STICKY - SCROLLS NATURALLY) -->
+        <section class="filter-panel">
+            <div class="filters-left-group">
+                <div class="filter-item">
+                    <label class="filter-label">Zona:</label>
+                    <select class="filter-select" id="selectZona" onchange="onZonaChange()">
+                        <option value="ALL">Todas las Zonas (5)</option>
+                        <option value="Carol Cedano">Carol Cedano</option>
+                        <option value="Doris Cuba">Doris Cuba</option>
+                        <option value="Angela Ramos">Angela Ramos</option>
+                        <option value="Alex Huamán">Alex Huamán</option>
+                        <option value="Everth Contreras">Everth Contreras</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="filter-label">Supervisor:</label>
+                    <select class="filter-select" id="selectSupervisor" onchange="applyFilters()">
+                        <option value="ALL">Todos los Supervisores</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="filter-label">Sede:</label>
+                    <select class="filter-select" id="selectPlaya" onchange="applyFilters()">
+                        <option value="ALL">Todas las Playas (51)</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="filter-label">Tipo:</label>
+                    <select class="filter-select" id="selectTipoSede" onchange="applyFilters()">
+                        <option value="ALL">Todas las Sedes (51)</option>
+                        <option value="SIN RECAUDACIÓN">Sin Recaudación (46 Directas)</option>
+                        <option value="CON RECAUDACIÓN">Con Recaudación (5 Sedes)</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <input type="text" class="filter-input" id="searchBox" placeholder="🔍 Buscar por sede..." oninput="applyFilters()">
+                </div>
+            </div>
+
+            <button class="btn-reset" onclick="resetFilters()">
+                🔄 Restablecer Filtros
+            </button>
+        </section>
+
+        <!-- TABS BAR (PILL SWITCHERS) -->
+        <nav class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-eerr')">
+                📊 Resultados EERR Consolidado
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-eventuales')">
+                🚗 Matriz Operativa de Eventuales
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-comentarios')">
+                💬 Diagnóstico Gerencial & Auditoría Atípicos
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-mom-yoy')">
+                📈 Crecimiento MoM & YoY (Tabla 1B)
+            </button>
+        </nav>
+
+        <!-- MACRO KPIS GRID (Symmetrical 4x2 Layout) -->
+        <section class="macro-kpis-grid">
+            <!-- ROW 1: RESUMEN FINANCIERO -->
+            <div class="kpi-card pink">
+                <div class="kpi-header">
+                    <span class="kpi-title">Recaudación Real (S/)</span>
+                    <span class="kpi-pill pill-blue">Sin IGV</span>
+                </div>
+                <div class="kpi-val" id="kpiReal">S/ 0.00</div>
+                <div class="kpi-sub" id="kpiRealSub">Acumulado mensual</div>
+            </div>
+
+            <div class="kpi-card purple">
+                <div class="kpi-header">
+                    <span class="kpi-title">PPTO Ingresos (S/)</span>
+                    <span class="kpi-pill" id="kpiCumplPill">0.0%</span>
+                </div>
+                <div class="kpi-val" id="kpiPPTO">S/ 0.00</div>
+                <div class="kpi-sub" id="kpiPPTOSub">Presupuesto oficial</div>
+            </div>
+
+            <div class="kpi-card green" id="kpiMargenCard">
+                <div class="kpi-header">
+                    <span class="kpi-title">Margen / Déficit vs PPTO</span>
+                    <span class="kpi-pill" id="kpiMargenPill">+S/ 0.00</span>
+                </div>
+                <div class="kpi-val" id="kpiMargen">S/ 0.00</div>
+                <div class="kpi-sub" id="kpiMargenSub">Variación monetaria</div>
+            </div>
+
+            <div class="kpi-card blue">
+                <div class="kpi-header">
+                    <span class="kpi-title">Utilidad Bruta (S/)</span>
+                    <span class="kpi-pill pill-green" id="kpiUtilidadPct">0.0%</span>
+                </div>
+                <div class="kpi-val" id="kpiUtilidad">S/ 0.00</div>
+                <div class="kpi-sub" id="kpiUtilidadSub">Egresos: S/ 0.00</div>
+            </div>
+
+            <!-- ROW 2: INDICADORES OPERACIONALES -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Flujo & Transacciones</span>
+                    <span class="kpi-pill pill-blue" id="kpiTkProm">Tk S/ 0.00</span>
+                </div>
+                <div class="kpi-val" id="kpiFlujo">0</div>
+                <div class="kpi-sub" id="kpiFlujoSub">Tickets: 0</div>
+            </div>
+
+            <div class="kpi-card" id="kpiPLCard">
+                <div class="kpi-header">
+                    <span class="kpi-title">Pases Libres (PL)</span>
+                    <span class="kpi-pill" id="kpiPLPill">Meta ≤3.0%</span>
+                </div>
+                <div class="kpi-val" id="kpiPL">0</div>
+                <div class="kpi-sub" id="kpiPLSub">0.0% del Flujo</div>
+            </div>
+
+            <div class="kpi-card" id="kpiSMCard">
+                <div class="kpi-header">
+                    <span class="kpi-title">Salidas Manuales (SM)</span>
+                    <span class="kpi-pill" id="kpiSMPill">Meta ≤1.0%</span>
+                </div>
+                <div class="kpi-val" id="kpiSM">0</div>
+                <div class="kpi-sub" id="kpiSMSub">0.0% del Flujo</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Tasa LPR Promedio</span>
+                    <span class="kpi-pill pill-blue">Cámaras DWH</span>
+                </div>
+                <div class="kpi-val" id="kpiLPR">0.0%</div>
+                <div class="kpi-sub">Lectura automática</div>
+            </div>
+        </section>
+
+        <!-- TOP 3 SUPERÁVIT Y DÉFICIT (ESTRICTAMENTE PLAYAS SIN RECAUDACIÓN) -->
+        <section class="top3-section">
+            <div class="top3-box">
+                <div class="top3-header">
+                    <span class="top3-title" style="color:var(--green-dark);">🏆 Top 3 Superávit vs PPTO (Exclusivo Sin Recaudación)</span>
+                    <span class="badge-status badge-green">Foco Sin Recaudación</span>
+                </div>
+                <div class="top3-list" id="top3SuperavitList"></div>
+            </div>
+
+            <div class="top3-box">
+                <div class="top3-header">
+                    <span class="top3-title" style="color:var(--red-dark);">⚠️ Top 3 Déficit vs PPTO (Exclusivo Sin Recaudación)</span>
+                    <span class="badge-status badge-red">Foco Sin Recaudación</span>
+                </div>
+                <div class="top3-list" id="top3DeficitList"></div>
+            </div>
+        </section>
+
+        <!-- TAB 1: ESTADO DE RESULTADOS (EERR) CONSOLIDADO -->
+        <div id="tab-eerr" class="tab-pane active">
+            <!-- TABLA MACRO POR ZONA -->
+            <div class="card-table-section">
+                <div class="table-header-bar">
+                    <div class="table-title">🏢 Consolidado Gerencial por Zona y Administrador</div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Soles (S/) Sin IGV</span>
+                </div>
+                <div class="table-container">
+                    <table class="apparka-table" id="tableMacroZonas">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Zona / Administrador</th>
+                                <th>Sedes</th>
+                                <th class="text-right">PPTO Ing. (S/)</th>
+                                <th class="text-right">Flash Ing. (S/)</th>
+                                <th class="text-right">Real Ing. (S/)</th>
+                                <th class="text-right">Margen / Déficit (S/)</th>
+                                <th class="text-center">% Cumpl. PPTO</th>
+                                <th class="text-right">Real Egresos (S/)</th>
+                                <th class="text-right">Utilidad Bruta (S/)</th>
+                                <th class="text-center">% Margen Bruto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyMacroZonas"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TABLA DETALLE DE LÍNEAS DE INGRESO (ÉNFASIS EN ABONADOS, EVENTUALES, LAVADO Y LOCAL COMERCIAL) -->
+            <div class="card-table-section">
+                <div class="table-header-bar">
+                    <div class="table-title">💰 Desglose Multilínea de Ingresos por Sede (Énfasis Comercial Especial)</div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Líneas Reales Sin IGV</span>
+                </div>
+                <div class="table-container">
+                    <table class="apparka-table" id="tableLineasIngresos">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Playa</th>
+                                <th class="text-left">Zona</th>
+                                <th class="text-center">Tipo</th>
+                                <th class="text-right" style="background:#0F172A;">Total Ing. Real (S/)</th>
+                                <th class="text-right" style="background:#2563EB;">👤 Abonados (S/)</th>
+                                <th class="text-right" style="background:#ED2579;">🚗 Eventuales Tot. (S/)</th>
+                                <th class="text-right sub-th">Rack (S/)</th>
+                                <th class="text-right sub-th">Apparka (S/)</th>
+                                <th class="text-right" style="background:#059669;">🧼 Lavado (S/)</th>
+                                <th class="text-right" style="background:#D97706;">🏪 Local Com. (S/)</th>
+                                <th class="text-right">Publicidad (S/)</th>
+                                <th class="text-right">Otros Ing. (S/)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyLineasIngresos"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TABLA DE EGRESOS POR RUBRO -->
+            <div class="card-table-section">
+                <div class="table-header-bar">
+                    <div class="table-title">📉 Estructura de Costos & Egresos Operacionales Ejecutados</div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Auditoría de Gastos</span>
+                </div>
+                <div class="table-container">
+                    <table class="apparka-table" id="tableEgresos">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Playa</th>
+                                <th class="text-left">Zona</th>
+                                <th class="text-right" style="background:#B91C1C;">Total Egresos (S/)</th>
+                                <th class="text-right">Alquiler Espacio (S/)</th>
+                                <th class="text-right">Gastos Personal (S/)</th>
+                                <th class="text-right">Mantenimiento (S/)</th>
+                                <th class="text-right">Repuestos (S/)</th>
+                                <th class="text-right">Tecnología (S/)</th>
+                                <th class="text-right">Servicios Básicos (S/)</th>
+                                <th class="text-right">Otros Gastos (S/)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyEgresos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: MATRIZ OFICIAL DE INDICADORES OPERATIVOS EVENTUALES -->
+        <div id="tab-eventuales" class="tab-pane">
+            <div class="card-table-section">
+                <div class="table-header-bar">
+                    <div class="table-title">🚗 Matriz Oficial de Indicadores Operativos Eventuales</div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Auditoría Synapse DWH</span>
+                </div>
+
+                <!-- LEYENDA CLARA DE PERMANENCIA -->
+                <div class="permanence-legend-bar">
+                    <span style="font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 6px;">
+                        📊 Distribución de Permanencia:
+                    </span>
+                    <div class="legend-tag">
+                        <span class="legend-color-box" style="background:#10B981;"></span>
+                        <span><b>0 a 1 h:</b> Corta rotación</span>
+                    </div>
+                    <div class="legend-tag">
+                        <span class="legend-color-box" style="background:#3B82F6;"></span>
+                        <span><b>1 a 2 h:</b> Media estadía</span>
+                    </div>
+                    <div class="legend-tag">
+                        <span class="legend-color-box" style="background:#8B5CF6;"></span>
+                        <span><b>2 a 4 h:</b> Estadía extendida</span>
+                    </div>
+                    <div class="legend-tag">
+                        <span class="legend-color-box" style="background:#1E293B;"></span>
+                        <span><b>Más de 4 h:</b> Oficina / Pernocte</span>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="apparka-table" id="tableEventuales">
+                        <thead>
+                            <tr>
+                                <th class="text-left">PLAYA</th>
+                                <th>MODELO TARIFARIO</th>
+                                <th class="text-left">SUPERVISOR</th>
+                                <th>CAJ.</th>
+                                <th class="text-right" title="Recaudación Real dividida entre la cantidad de cajones">RECAUDACIÓN / CAJÓN (S/)</th>
+                                <th class="text-right">PPTO (S/)</th>
+                                <th class="text-right" style="background:#2A1B82;">FLASH (S/)</th>
+                                <th class="text-right">REAL (S/)</th>
+                                <th class="text-right" style="background:#15803d;">MARGEN / DÉFICIT (S/)</th>
+                                <th class="text-center">% CUMPL.</th>
+                                <th class="text-right">FLUJO VEH.</th>
+                                <th class="text-right">TICKETS</th>
+                                <th class="text-right">PL EVENT.</th>
+                                <th class="text-center">% PL</th>
+                                <th class="text-center">CUMPL. PL</th>
+                                <th class="text-right">SM EVENT.</th>
+                                <th class="text-center">% SM</th>
+                                <th class="text-center">CUMPL. SM</th>
+                                <th class="text-center">LPR (%)</th>
+                                <th class="text-center">% EFEC</th>
+                                <th class="text-center">% TARJ</th>
+                                <th>HORA PICO ENTRADA</th>
+                                <th>HORA PICO SALIDA</th>
+                                <th>PERMANENCIA PROM.</th>
+                                <th>OCUPACIÓN MÁX (%)</th>
+                                <th style="min-width: 190px;">DISTRIBUCIÓN PERMANENCIA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyEventuales"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: COMENTARIOS GERENCIALES & AUDITORÍA ATÍPICOS -->
+        <div id="tab-comentarios" class="tab-pane">
+            <div class="table-header-bar" style="background:transparent; padding: 0 0 14px 0;">
+                <div class="table-title" style="font-size:15px;">💬 Fichas de Diagnóstico Gerencial & Auditoría Forense de Atípicos</div>
+                <span style="font-size: 11.5px; font-weight: 600; color: var(--text-muted);">
+                    Mostrando formato ejecutivo oficial con montos monetarios explícitos (+/- S/) y desvíos vs Flash
+                </span>
+            </div>
+            <div class="comments-grid" id="commentsGrid"></div>
+        </div>
+
+        <!-- TAB 4: ANÁLISIS CRECIMIENTO MOM & YOY -->
+        <div id="tab-mom-yoy" class="tab-pane">
+            <div class="card-table-section">
+                <div class="table-header-bar">
+                    <div class="table-title">📈 Comparativo Dinámico de Crecimiento MoM y YoY (Tabla 1B Oficial)</div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Valores Históricos Reales Sin IGV</span>
+                </div>
+                <div class="table-container">
+                    <table class="apparka-table" id="tableMoMYoY">
+                        <thead>
+                            <tr>
+                                <th class="text-left">PLAYA</th>
+                                <th class="text-left">ZONA</th>
+                                <th class="text-right">SET 2025 (AÑO ANTERIOR)</th>
+                                <th class="text-right">AGO 2026 (MES ANTERIOR)</th>
+                                <th class="text-right" style="background:#0F172A;">SET 2026 (REAL ACTUAL)</th>
+                                <th class="text-right">VARIACIÓN MES ANTERIOR (S/)</th>
+                                <th class="text-center">VARIACIÓN MES ANTERIOR (%)</th>
+                                <th class="text-center">VARIACIÓN FLUJO MES ANTERIOR (%)</th>
+                                <th class="text-right">VARIACIÓN AÑO ANTERIOR (S/)</th>
+                                <th class="text-center">VARIACIÓN AÑO ANTERIOR (%)</th>
+                                <th class="text-center">VARIACIÓN FLUJO AÑO ANTERIOR (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyMoMYoY"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLOATING BUTTON TO SCROLL TO TOP -->
+        <button class="btn-scroll-top" id="btnScrollTop" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" title="Volver al inicio">
+            ▲
+        </button>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC & REACTIVE STATE -->
+    <script>
+        window.ALL_BEACHES_DATA = {"Miró Quesada": {"playa": "Miró Quesada", "id_playa": 24, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Siccy Celi Cordero", "modelo_tarifario": "Fraccionado", "cajones": 65, "revpah": 4428.14, "ppto": 254863.53, "flash": 297366.41, "real": 287829.06, "ago26": 326951.32, "sep25": 59655.99, "egresos_real": 204412.86, "egresos_ppto": 196982.5, "egresos_flash": 198340.92, "utilidad_real": 83416.2, "utilidad_ppto": 57881.04, "margen_deficit": 32965.53, "pct_cumpl": 112.9, "flujo_vehicular": 19233, "tickets": 18957, "pases_libres": 276, "pct_pl": 1.44, "cumplio_pl": true, "salidas_manuales": 77, "pct_sm": 0.4, "cumplio_sm": true, "tk_prom": 26.97, "pct_efec": 13.7, "pct_tarj": 86.3, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 97.2, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 90.8, "perm_prom_horas": 4.3, "perm_distrib": {"0_1h": 42.0, "1_2h": 26.0, "2_4h": 18.0, "mas_4h": 14.0}, "mom_rec_dif": -39122.26, "mom_rec_pct": -12.0, "mom_flujo_pct": -11.8, "yoy_rec_dif": 228173.07, "yoy_rec_pct": 382.5, "yoy_flujo_pct": 363.4, "desglose_ingresos": {"abonados": 122537.06, "eventuales_total": 145672.89, "eventuales_rack": 113421.44, "eventuales_apparka": 32251.45, "lavado": 3644.07, "local_comercial": 644.03, "publicidad": 0.0, "otros_ingresos": 15331.01}, "desglose_egresos": {"alquiler": 164085.95, "personal": 16221.98, "mantenimiento": 6916.47, "repuestos": 0.0, "tecnologia": 0.0, "energia": 5125.84, "servicios_basicos": 6696.72, "otros_egresos": 10491.74}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 287,829.06 (112.9% de PPTO, superávit de +S/ 32,965.53 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 6,071.94 vs Flash; Alquiler fue el componente principal (S/ 164,085.95, 80.3% del gasto)."}, "Union 1065": {"playa": "Union 1065", "id_playa": 306, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Briones Carlos", "modelo_tarifario": "Fraccionado", "cajones": 55, "revpah": 853.43, "ppto": 50532.21, "flash": 46293.5, "real": 46938.4, "ago26": 52563.65, "sep25": 0.0, "egresos_real": 15744.37, "egresos_ppto": 14010.69, "egresos_flash": 14287.44, "utilidad_real": 31194.03, "utilidad_ppto": 36521.53, "margen_deficit": -3593.81, "pct_cumpl": 92.9, "flujo_vehicular": 3083, "tickets": 3069, "pases_libres": 14, "pct_pl": 0.45, "cumplio_pl": true, "salidas_manuales": 7, "pct_sm": 0.23, "cumplio_sm": true, "tk_prom": 14.35, "pct_efec": 19.0, "pct_tarj": 81.0, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "21:00 - 22:00", "tasa_ocup_max": 80.3, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 89.0, "perm_prom_horas": 2.3, "perm_distrib": {"0_1h": 56.0, "1_2h": 20.7, "2_4h": 14.9, "mas_4h": 8.4}, "mom_rec_dif": -5625.25, "mom_rec_pct": -10.7, "mom_flujo_pct": -10.5, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 6304.22, "eventuales_total": 39066.33, "eventuales_rack": 26224.84, "eventuales_apparka": 12841.49, "lavado": 550.85, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 1017.0}, "desglose_egresos": {"alquiler": 8927.47, "personal": 3574.84, "mantenimiento": 766.34, "repuestos": 250.11, "tecnologia": 0.0, "energia": 254.59, "servicios_basicos": 867.02, "otros_egresos": 1358.59}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 46,938.40 (92.9% de PPTO, brecha de S/ -3,593.81 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,456.93 vs Flash; Alquiler fue el componente principal (S/ 8,927.47, 56.7% del gasto)."}, "Puno": {"playa": "Puno", "id_playa": 252, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Briones Carlos", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 1106.41, "ppto": 53386.16, "flash": 50263.66, "real": 49788.34, "ago26": 53517.74, "sep25": 0.0, "egresos_real": 29088.93, "egresos_ppto": 28550.68, "egresos_flash": 28162.07, "utilidad_real": 20699.41, "utilidad_ppto": 24835.47, "margen_deficit": -3597.82, "pct_cumpl": 93.3, "flujo_vehicular": 2921, "tickets": 2881, "pases_libres": 40, "pct_pl": 1.37, "cumplio_pl": true, "salidas_manuales": 33, "pct_sm": 1.13, "cumplio_sm": false, "tk_prom": 12.49, "pct_efec": 32.9, "pct_tarj": 67.1, "hora_pico_in": "10:00 - 11:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 82.3, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 84.0, "perm_prom_horas": 2.0, "perm_distrib": {"0_1h": 53.4, "1_2h": 21.8, "2_4h": 13.0, "mas_4h": 11.8}, "mom_rec_dif": -3729.4, "mom_rec_pct": -7.0, "mom_flujo_pct": -6.9, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 8897.52, "eventuales_total": 37909.76, "eventuales_rack": 30389.07, "eventuales_apparka": 7520.69, "lavado": 576.28, "local_comercial": 500.0, "publicidad": 0.0, "otros_ingresos": 1904.78}, "desglose_egresos": {"alquiler": 18892.6, "personal": 3634.34, "mantenimiento": 1530.0, "repuestos": 250.06, "tecnologia": 0.0, "energia": 172.61, "servicios_basicos": 1007.48, "otros_egresos": 3774.45}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 49,788.34 (93.3% de PPTO, brecha de S/ -3,597.82 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 926.86 vs Flash; Alquiler fue el componente principal (S/ 18,892.60, 64.9% del gasto)."}, "Abancay": {"playa": "Abancay", "id_playa": 137, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Pairasaman Felipe Juan", "modelo_tarifario": "Fraccionado", "cajones": 55, "revpah": 726.06, "ppto": 35411.9, "flash": 39320.23, "real": 39933.12, "ago26": 42671.32, "sep25": 35584.76, "egresos_real": 20448.77, "egresos_ppto": 20068.97, "egresos_flash": 19956.56, "utilidad_real": 19484.35, "utilidad_ppto": 15342.93, "margen_deficit": 4521.22, "pct_cumpl": 112.8, "flujo_vehicular": 2403, "tickets": 2344, "pases_libres": 59, "pct_pl": 2.46, "cumplio_pl": true, "salidas_manuales": 35, "pct_sm": 1.46, "cumplio_sm": false, "tk_prom": 19.66, "pct_efec": 23.5, "pct_tarj": 76.5, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 79.5, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 58.4, "perm_prom_horas": 3.2, "perm_distrib": {"0_1h": 47.8, "1_2h": 23.8, "2_4h": 17.4, "mas_4h": 11.0}, "mom_rec_dif": -2738.2, "mom_rec_pct": -6.4, "mom_flujo_pct": -6.3, "yoy_rec_dif": 4348.36, "yoy_rec_pct": 12.2, "yoy_flujo_pct": 11.6, "desglose_ingresos": {"abonados": 9411.82, "eventuales_total": 29878.0, "eventuales_rack": 19497.81, "eventuales_apparka": 10380.19, "lavado": 211.86, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 431.44}, "desglose_egresos": {"alquiler": 12752.02, "personal": 5692.12, "mantenimiento": 200.0, "repuestos": 250.06, "tecnologia": 0.0, "energia": 174.79, "servicios_basicos": 596.93, "otros_egresos": 957.64}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 39,933.12 (112.8% de PPTO, superávit de +S/ 4,521.22 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 492.21 vs Flash; Alquiler fue el componente principal (S/ 12,752.02, 62.4% del gasto)."}, "Maximo Abril 596": {"playa": "Maximo Abril 596", "id_playa": 551, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Siccy Celi Cordero", "modelo_tarifario": "Fraccionado", "cajones": 60, "revpah": 395.7, "ppto": 25526.7, "flash": 23189.98, "real": 23742.06, "ago26": 23154.67, "sep25": 22534.58, "egresos_real": 21687.12, "egresos_ppto": 21275.24, "egresos_flash": 21183.07, "utilidad_real": 2054.94, "utilidad_ppto": 4251.46, "margen_deficit": -1784.64, "pct_cumpl": 93.0, "flujo_vehicular": 1398, "tickets": 1387, "pases_libres": 11, "pct_pl": 0.79, "cumplio_pl": true, "salidas_manuales": 9, "pct_sm": 0.64, "cumplio_sm": true, "tk_prom": 13.66, "pct_efec": 26.4, "pct_tarj": 73.6, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 75.9, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 88.0, "perm_prom_horas": 2.2, "perm_distrib": {"0_1h": 56.8, "1_2h": 20.4, "2_4h": 14.6, "mas_4h": 8.2}, "mom_rec_dif": 587.39, "mom_rec_pct": 2.5, "mom_flujo_pct": 2.5, "yoy_rec_dif": 1207.48, "yoy_rec_pct": 5.4, "yoy_flujo_pct": 5.1, "desglose_ingresos": {"abonados": 540.95, "eventuales_total": 20773.14, "eventuales_rack": 13506.77, "eventuales_apparka": 7266.37, "lavado": 423.73, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 2004.24}, "desglose_egresos": {"alquiler": 16000.0, "personal": 2863.73, "mantenimiento": 1232.54, "repuestos": 0.0, "tecnologia": 0.0, "energia": 10.15, "servicios_basicos": 400.89, "otros_egresos": 1189.96}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 23,742.06 (93.0% de PPTO, brecha de S/ -1,784.64 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 504.05 vs Flash; Alquiler fue el componente principal (S/ 16,000.00, 73.8% del gasto)."}, "Washington 863": {"playa": "Washington 863", "id_playa": 421, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Briones Carlos", "modelo_tarifario": "Fraccionado", "cajones": 50, "revpah": 501.0, "ppto": 21077.02, "flash": 23731.63, "real": 25050.17, "ago26": 21927.31, "sep25": 14500.08, "egresos_real": 13228.09, "egresos_ppto": 11070.31, "egresos_flash": 11663.32, "utilidad_real": 11822.08, "utilidad_ppto": 10006.7, "margen_deficit": 3973.15, "pct_cumpl": 118.9, "flujo_vehicular": 1297, "tickets": 1282, "pases_libres": 15, "pct_pl": 1.16, "cumplio_pl": true, "salidas_manuales": 12, "pct_sm": 0.93, "cumplio_sm": true, "tk_prom": 12.7, "pct_efec": 22.1, "pct_tarj": 77.9, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "19:00 - 20:00", "tasa_ocup_max": 76.3, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 85.0, "perm_prom_horas": 2.0, "perm_distrib": {"0_1h": 54.4, "1_2h": 21.4, "2_4h": 13.2, "mas_4h": 11.0}, "mom_rec_dif": 3122.86, "mom_rec_pct": 14.2, "mom_flujo_pct": 13.9, "yoy_rec_dif": 10550.09, "yoy_rec_pct": 72.8, "yoy_flujo_pct": 69.2, "desglose_ingresos": {"abonados": 3707.93, "eventuales_total": 10765.21, "eventuales_rack": 5961.8, "eventuales_apparka": 4803.41, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 10236.33, "otros_ingresos": 340.7}, "desglose_egresos": {"alquiler": 6798.0, "personal": 2563.68, "mantenimiento": 2471.71, "repuestos": 0.0, "tecnologia": 0.0, "energia": 130.15, "servicios_basicos": 312.89, "otros_egresos": 1081.81}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 25,050.17 (118.9% de PPTO, superávit de +S/ 3,973.15 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,564.77 vs Flash; Alquiler fue el componente principal (S/ 6,798.00, 51.4% del gasto)."}, "Ignacio Merino 1839": {"playa": "Ignacio Merino 1839", "id_playa": 604, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Siccy Celi Cordero", "modelo_tarifario": "Fraccionado", "cajones": 50, "revpah": 320.28, "ppto": 18762.88, "flash": 16243.26, "real": 16014.14, "ago26": 16315.38, "sep25": 10379.04, "egresos_real": 17998.79, "egresos_ppto": 16935.29, "egresos_flash": 17404.03, "utilidad_real": -1984.65, "utilidad_ppto": 1827.58, "margen_deficit": -2748.74, "pct_cumpl": 85.4, "flujo_vehicular": 1189, "tickets": 1179, "pases_libres": 10, "pct_pl": 0.84, "cumplio_pl": true, "salidas_manuales": 14, "pct_sm": 1.18, "cumplio_sm": false, "tk_prom": 10.86, "pct_efec": 17.7, "pct_tarj": 82.3, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 78.4, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 82.0, "perm_prom_horas": 1.8, "perm_distrib": {"0_1h": 57.0, "1_2h": 20.4, "2_4h": 12.8, "mas_4h": 9.8}, "mom_rec_dif": -301.24, "mom_rec_pct": -1.8, "mom_flujo_pct": -1.8, "yoy_rec_dif": 5635.1, "yoy_rec_pct": 54.3, "yoy_flujo_pct": 51.6, "desglose_ingresos": {"abonados": 7286.45, "eventuales_total": 8622.51, "eventuales_rack": 6666.55, "eventuales_apparka": 1955.96, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 105.18}, "desglose_egresos": {"alquiler": 10000.0, "personal": 3383.47, "mantenimiento": 956.83, "repuestos": 0.0, "tecnologia": 50.35, "energia": 265.87, "servicios_basicos": 775.19, "otros_egresos": 2832.95}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 16,014.14 (85.4% de PPTO, brecha de S/ -2,748.74 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -1,984.65: el costo principal fue Alquiler con S/ 10,000.00 (55.6% del costo total)."}, "España": {"playa": "España", "id_playa": 112, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Siccy Celi Cordero", "modelo_tarifario": "Fraccionado", "cajones": 70, "revpah": 329.54, "ppto": 22199.32, "flash": 23216.79, "real": 23067.49, "ago26": 21804.14, "sep25": 13472.37, "egresos_real": 19054.36, "egresos_ppto": 16564.24, "egresos_flash": 16631.37, "utilidad_real": 4013.13, "utilidad_ppto": 5635.08, "margen_deficit": 868.17, "pct_cumpl": 103.9, "flujo_vehicular": 1516, "tickets": 846, "pases_libres": 670, "pct_pl": 44.2, "cumplio_pl": false, "salidas_manuales": 7, "pct_sm": 0.46, "cumplio_sm": true, "tk_prom": 8.75, "pct_efec": 24.6, "pct_tarj": 75.4, "hora_pico_in": "13:00 - 14:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 76.5, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 45.5, "perm_prom_horas": 1.4, "perm_distrib": {"0_1h": 58.2, "1_2h": 20.0, "2_4h": 11.2, "mas_4h": 10.6}, "mom_rec_dif": 1263.35, "mom_rec_pct": 5.8, "mom_flujo_pct": 5.7, "yoy_rec_dif": 9595.12, "yoy_rec_pct": 71.2, "yoy_flujo_pct": 67.6, "desglose_ingresos": {"abonados": 11757.6, "eventuales_total": 10467.69, "eventuales_rack": 7767.53, "eventuales_apparka": 2700.16, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 842.2}, "desglose_egresos": {"alquiler": 8700.0, "personal": 5867.55, "mantenimiento": 446.01, "repuestos": 250.06, "tecnologia": 0.0, "energia": 499.52, "servicios_basicos": 1808.11, "otros_egresos": 1982.63}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 23,067.49 (103.9% de PPTO, superávit de +S/ 868.17), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 2,422.99 vs Flash; Alquiler fue el componente principal (S/ 8,700.00, 45.7% del gasto)."}, "Metro Emancipación": {"playa": "Metro Emancipación", "id_playa": 552, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Pairasaman Felipe Juan", "modelo_tarifario": "Fraccionado", "cajones": 40, "revpah": 110.47, "ppto": 4401.0, "flash": 0.0, "real": 4418.7, "ago26": 13010.47, "sep25": 0.0, "egresos_real": 2610.73, "egresos_ppto": 2601.0, "egresos_flash": 0.0, "utilidad_real": 1807.97, "utilidad_ppto": 1800.0, "margen_deficit": 17.7, "pct_cumpl": 100.4, "flujo_vehicular": 785, "tickets": 785, "pases_libres": 0, "pct_pl": 0.0, "cumplio_pl": true, "salidas_manuales": 0, "pct_sm": 0.0, "cumplio_sm": true, "tk_prom": 3.75, "pct_efec": 100.0, "pct_tarj": 0.0, "hora_pico_in": "13:00 - 14:00", "hora_pico_out": "18:00 - 19:00", "tasa_ocup_max": 76.2, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 55.0, "perm_prom_horas": 0.9, "perm_distrib": {"0_1h": 68.0, "1_2h": 16.1, "2_4h": 10.9, "mas_4h": 5.0}, "mom_rec_dif": -8591.77, "mom_rec_pct": -66.0, "mom_flujo_pct": -64.7, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 2115.82, "eventuales_total": 2302.88, "eventuales_rack": 2302.88, "eventuales_apparka": 0.0, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 0.0}, "desglose_egresos": {"alquiler": 0.0, "personal": 2005.41, "mantenimiento": 124.1, "repuestos": 0.0, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 481.22}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 4,418.70 (100.4% de PPTO, superávit de +S/ 17.70), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 2,610.73 vs Flash; Gastos de Personal fue el componente principal (S/ 2,005.41, 76.8% del gasto)."}, "Paseo de La República 567": {"playa": "Paseo de La República 567", "id_playa": 625, "zona": "Carol Cedano", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Pairasaman Felipe Juan", "modelo_tarifario": "Fraccionado", "cajones": 60, "revpah": 374.35, "ppto": 25502.58, "flash": 22111.44, "real": 22461.06, "ago26": 27162.48, "sep25": 20653.0, "egresos_real": 24607.2, "egresos_ppto": 24418.72, "egresos_flash": 22082.82, "utilidad_real": -2146.14, "utilidad_ppto": 1083.85, "margen_deficit": -3041.52, "pct_cumpl": 88.1, "flujo_vehicular": 4282, "tickets": 4248, "pases_libres": 34, "pct_pl": 0.79, "cumplio_pl": true, "salidas_manuales": 56, "pct_sm": 1.31, "cumplio_sm": false, "tk_prom": 5.27, "pct_efec": 44.4, "pct_tarj": 55.6, "hora_pico_in": "12:00 - 13:00", "hora_pico_out": "18:00 - 19:00", "tasa_ocup_max": 81.6, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 65.0, "perm_prom_horas": 0.9, "perm_distrib": {"0_1h": 64.2, "1_2h": 17.7, "2_4h": 10.1, "mas_4h": 8.0}, "mom_rec_dif": -4701.42, "mom_rec_pct": -17.3, "mom_flujo_pct": -17.0, "yoy_rec_dif": 1808.06, "yoy_rec_pct": 8.8, "yoy_flujo_pct": 8.4, "desglose_ingresos": {"abonados": 3138.97, "eventuales_total": 14824.26, "eventuales_rack": 13362.49, "eventuales_apparka": 1461.77, "lavado": 847.46, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 3650.37}, "desglose_egresos": {"alquiler": 20700.0, "personal": 280.57, "mantenimiento": 62.25, "repuestos": 0.0, "tecnologia": 0.0, "energia": 350.0, "servicios_basicos": 520.0, "otros_egresos": 3044.38}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 22,461.06 (88.1% de PPTO, brecha de S/ -3,041.52 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -2,146.14: el costo principal fue Alquiler con S/ 20,700.00 (84.1% del costo total)."}, "Moral 205": {"playa": "Moral 205", "id_playa": 517, "zona": "Doris Cuba", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Giancarlo Garcia", "modelo_tarifario": "Fraccionado", "cajones": 50, "revpah": 1414.98, "ppto": 61597.69, "flash": 71645.15, "real": 70748.98, "ago26": 78904.0, "sep25": 61200.27, "egresos_real": 48873.67, "egresos_ppto": 49678.02, "egresos_flash": 48863.45, "utilidad_real": 21875.31, "utilidad_ppto": 11919.67, "margen_deficit": 9151.29, "pct_cumpl": 114.9, "flujo_vehicular": 7708, "tickets": 7676, "pases_libres": 32, "pct_pl": 0.42, "cumplio_pl": true, "salidas_manuales": 109, "pct_sm": 1.41, "cumplio_sm": false, "tk_prom": 10.04, "pct_efec": 33.3, "pct_tarj": 66.7, "hora_pico_in": "18:00 - 19:00", "hora_pico_out": "21:00 - 22:00", "tasa_ocup_max": 94.4, "rango_max_ocup": "18:00 - 21:00", "lpr_real": 88.0, "perm_prom_horas": 1.6, "perm_distrib": {"0_1h": 62.6, "1_2h": 18.2, "2_4h": 13.0, "mas_4h": 6.2}, "mom_rec_dif": -8155.02, "mom_rec_pct": -10.3, "mom_flujo_pct": -10.1, "yoy_rec_dif": 9548.71, "yoy_rec_pct": 15.6, "yoy_flujo_pct": 14.8, "desglose_ingresos": {"abonados": 2656.8, "eventuales_total": 65015.58, "eventuales_rack": 44854.48, "eventuales_apparka": 20161.1, "lavado": 1440.68, "local_comercial": 0.0, "publicidad": 600.0, "otros_ingresos": 1035.92}, "desglose_egresos": {"alquiler": 38640.0, "personal": 5542.08, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 127.19, "energia": 1509.88, "servicios_basicos": 1869.62, "otros_egresos": 2694.78}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 70,748.98 (114.9% de PPTO, superávit de +S/ 9,151.29 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 10.22 vs Flash; Alquiler fue el componente principal (S/ 38,640.00, 79.1% del gasto)."}, "Rivero 200": {"playa": "Rivero 200", "id_playa": 557, "zona": "Doris Cuba", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Giancarlo Garcia", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 978.34, "ppto": 56375.85, "flash": 44620.49, "real": 44025.09, "ago26": 54475.08, "sep25": 47812.76, "egresos_real": 50568.14, "egresos_ppto": 52369.18, "egresos_flash": 50072.31, "utilidad_real": -6543.05, "utilidad_ppto": 4006.67, "margen_deficit": -12350.76, "pct_cumpl": 78.1, "flujo_vehicular": 6812, "tickets": 6811, "pases_libres": 1, "pct_pl": 0.01, "cumplio_pl": true, "salidas_manuales": 148, "pct_sm": 2.17, "cumplio_sm": false, "tk_prom": 6.28, "pct_efec": 52.6, "pct_tarj": 47.4, "hora_pico_in": "10:00 - 11:00", "hora_pico_out": "19:00 - 20:00", "tasa_ocup_max": 94.0, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 85.0, "perm_prom_horas": 1.0, "perm_distrib": {"0_1h": 65.4, "1_2h": 17.2, "2_4h": 10.8, "mas_4h": 6.6}, "mom_rec_dif": -10449.99, "mom_rec_pct": -19.2, "mom_flujo_pct": -18.8, "yoy_rec_dif": -3787.67, "yoy_rec_pct": -7.9, "yoy_flujo_pct": -7.5, "desglose_ingresos": {"abonados": 2224.58, "eventuales_total": 34483.45, "eventuales_rack": 28479.86, "eventuales_apparka": 6003.59, "lavado": 847.46, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 6469.6}, "desglose_egresos": {"alquiler": 45360.0, "personal": 3396.16, "mantenimiento": 45.3, "repuestos": 0.0, "tecnologia": 0.0, "energia": 130.53, "servicios_basicos": 967.64, "otros_egresos": 799.04}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 44,025.09 (78.1% de PPTO, brecha de S/ -12,350.76 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -6,543.05: el costo principal fue Alquiler con S/ 45,360.00 (89.7% del costo total)."}, "San José 123": {"playa": "San José 123", "id_playa": 556, "zona": "Doris Cuba", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Giancarlo Garcia", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 631.88, "ppto": 29326.48, "flash": 30057.37, "real": 28434.42, "ago26": 34753.02, "sep25": 26128.95, "egresos_real": 23996.66, "egresos_ppto": 23657.1, "egresos_flash": 23633.44, "utilidad_real": 4437.76, "utilidad_ppto": 5669.38, "margen_deficit": -892.06, "pct_cumpl": 97.0, "flujo_vehicular": 3621, "tickets": 3595, "pases_libres": 26, "pct_pl": 0.72, "cumplio_pl": true, "salidas_manuales": 39, "pct_sm": 1.08, "cumplio_sm": false, "tk_prom": 9.26, "pct_efec": 42.4, "pct_tarj": 57.6, "hora_pico_in": "11:00 - 12:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 83.6, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 87.0, "perm_prom_horas": 1.5, "perm_distrib": {"0_1h": 60.4, "1_2h": 19.1, "2_4h": 12.1, "mas_4h": 8.4}, "mom_rec_dif": -6318.6, "mom_rec_pct": -18.2, "mom_flujo_pct": -17.8, "yoy_rec_dif": 2305.47, "yoy_rec_pct": 8.8, "yoy_flujo_pct": 8.4, "desglose_ingresos": {"abonados": 1939.85, "eventuales_total": 25478.41, "eventuales_rack": 19157.05, "eventuales_apparka": 6321.36, "lavado": 847.46, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 168.7}, "desglose_egresos": {"alquiler": 19440.0, "personal": 3571.29, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 131.56, "servicios_basicos": 297.16, "otros_egresos": 688.21}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 28,434.42 (97.0% de PPTO, brecha de S/ -892.06 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 363.22 vs Flash; Alquiler fue el componente principal (S/ 19,440.00, 81.0% del gasto)."}, "Siglo XX 218": {"playa": "Siglo XX 218", "id_playa": 569, "zona": "Doris Cuba", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Giancarlo Garcia", "modelo_tarifario": "Fraccionado", "cajones": 40, "revpah": 537.12, "ppto": 23600.79, "flash": 21484.82, "real": 21484.74, "ago26": 24840.62, "sep25": 22073.02, "egresos_real": 17938.8, "egresos_ppto": 19359.73, "egresos_flash": 18042.62, "utilidad_real": 3545.94, "utilidad_ppto": 4241.06, "margen_deficit": -2116.05, "pct_cumpl": 91.0, "flujo_vehicular": 3769, "tickets": 3706, "pases_libres": 63, "pct_pl": 1.67, "cumplio_pl": true, "salidas_manuales": 2, "pct_sm": 0.05, "cumplio_sm": true, "tk_prom": 7.05, "pct_efec": 42.6, "pct_tarj": 57.4, "hora_pico_in": "11:00 - 12:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 87.9, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 82.0, "perm_prom_horas": 1.1, "perm_distrib": {"0_1h": 62.6, "1_2h": 18.3, "2_4h": 10.7, "mas_4h": 8.4}, "mom_rec_dif": -3355.88, "mom_rec_pct": -13.5, "mom_flujo_pct": -13.2, "yoy_rec_dif": -588.28, "yoy_rec_pct": -2.7, "yoy_flujo_pct": -2.6, "desglose_ingresos": {"abonados": 2411.02, "eventuales_total": 18618.62, "eventuales_rack": 13920.08, "eventuales_apparka": 4698.54, "lavado": 423.73, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 31.37}, "desglose_egresos": {"alquiler": 13000.0, "personal": 3073.14, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 270.41, "servicios_basicos": 414.4, "otros_egresos": 1451.26}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 21,484.74 (91.0% de PPTO, brecha de S/ -2,116.05 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 103.82 vs Flash: gastos controlados donde Alquiler representó el 72.5% del costo (S/ 13,000.00)."}, "Alcides Carrión 524": {"playa": "Alcides Carrión 524", "id_playa": 570, "zona": "Doris Cuba", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Giancarlo Garcia", "modelo_tarifario": "Fraccionado", "cajones": 40, "revpah": 755.42, "ppto": 31522.01, "flash": 25222.2, "real": 30216.79, "ago26": 24890.91, "sep25": 10805.4, "egresos_real": 20329.32, "egresos_ppto": 22191.81, "egresos_flash": 21823.54, "utilidad_real": 9887.47, "utilidad_ppto": 9330.2, "margen_deficit": -1305.22, "pct_cumpl": 95.9, "flujo_vehicular": 2218, "tickets": 2177, "pases_libres": 41, "pct_pl": 1.85, "cumplio_pl": true, "salidas_manuales": 4, "pct_sm": 0.18, "cumplio_sm": true, "tk_prom": 9.19, "pct_efec": 40.4, "pct_tarj": 59.6, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "11:00 - 12:00", "tasa_ocup_max": 79.5, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 80.0, "perm_prom_horas": 1.5, "perm_distrib": {"0_1h": 60.4, "1_2h": 19.1, "2_4h": 12.1, "mas_4h": 8.4}, "mom_rec_dif": 5325.88, "mom_rec_pct": 21.4, "mom_flujo_pct": 21.0, "yoy_rec_dif": 19411.39, "yoy_rec_pct": 179.6, "yoy_flujo_pct": 170.6, "desglose_ingresos": {"abonados": 16842.96, "eventuales_total": 12478.18, "eventuales_rack": 8852.21, "eventuales_apparka": 3625.97, "lavado": 847.46, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 48.19}, "desglose_egresos": {"alquiler": 13440.0, "personal": 2040.32, "mantenimiento": 117.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 245.87, "servicios_basicos": 285.11, "otros_egresos": 4446.89}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 30,216.79 (95.9% de PPTO, brecha de S/ -1,305.22 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 1,494.22 vs Flash: gastos controlados donde Alquiler representó el 66.1% del costo (S/ 13,440.00)."}, "Rivero Arequipa": {"playa": "Rivero Arequipa", "id_playa": 107, "zona": "Doris Cuba", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Giancarlo Garcia", "modelo_tarifario": "Fraccionado", "cajones": 35, "revpah": 335.79, "ppto": 13137.9, "flash": 11808.84, "real": 11752.56, "ago26": 13095.92, "sep25": 49921.05, "egresos_real": 10459.27, "egresos_ppto": 9063.43, "egresos_flash": 8952.59, "utilidad_real": 1293.29, "utilidad_ppto": 4074.47, "margen_deficit": -1385.34, "pct_cumpl": 89.5, "flujo_vehicular": 1552, "tickets": 1551, "pases_libres": 1, "pct_pl": 0.06, "cumplio_pl": true, "salidas_manuales": 16, "pct_sm": 1.03, "cumplio_sm": false, "tk_prom": 8.85, "pct_efec": 33.8, "pct_tarj": 66.2, "hora_pico_in": "11:00 - 12:00", "hora_pico_out": "14:00 - 15:00", "tasa_ocup_max": 79.6, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 78.5, "perm_prom_horas": 1.4, "perm_distrib": {"0_1h": 60.2, "1_2h": 19.2, "2_4h": 11.6, "mas_4h": 9.0}, "mom_rec_dif": -1343.36, "mom_rec_pct": -10.3, "mom_flujo_pct": -10.1, "yoy_rec_dif": -38168.49, "yoy_rec_pct": -76.5, "yoy_flujo_pct": -72.7, "desglose_ingresos": {"abonados": 1813.56, "eventuales_total": 8382.62, "eventuales_rack": 4174.92, "eventuales_apparka": 4207.7, "lavado": 296.61, "local_comercial": 0.0, "publicidad": 805.51, "otros_ingresos": 454.26}, "desglose_egresos": {"alquiler": 4635.0, "personal": 4412.27, "mantenimiento": 497.31, "repuestos": 0.0, "tecnologia": 0.0, "energia": 72.95, "servicios_basicos": 76.68, "otros_egresos": 838.01}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 11,752.56 (89.5% de PPTO, brecha de S/ -1,385.34 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,506.68 vs Flash; Alquiler fue el componente principal (S/ 4,635.00, 44.3% del gasto)."}, "Guardia Civil 205": {"playa": "Guardia Civil 205", "id_playa": 376, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Chunga Morante Oscar", "modelo_tarifario": "Fraccionado", "cajones": 75, "revpah": 1486.43, "ppto": 111113.02, "flash": 110948.43, "real": 111481.98, "ago26": 115017.72, "sep25": 62526.52, "egresos_real": 64900.54, "egresos_ppto": 53894.07, "egresos_flash": 62942.21, "utilidad_real": 46581.44, "utilidad_ppto": 57218.95, "margen_deficit": 368.96, "pct_cumpl": 100.3, "flujo_vehicular": 4676, "tickets": 4624, "pases_libres": 52, "pct_pl": 1.11, "cumplio_pl": true, "salidas_manuales": 36, "pct_sm": 0.77, "cumplio_sm": true, "tk_prom": 22.16, "pct_efec": 7.5, "pct_tarj": 92.5, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "19:00 - 20:00", "tasa_ocup_max": 81.2, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 91.0, "perm_prom_horas": 3.8, "perm_distrib": {"0_1h": 15.4, "1_2h": 15.2, "2_4h": 27.6, "mas_4h": 41.8}, "mom_rec_dif": -3535.74, "mom_rec_pct": -3.1, "mom_flujo_pct": -3.0, "yoy_rec_dif": 48955.46, "yoy_rec_pct": 78.3, "yoy_flujo_pct": 74.4, "desglose_ingresos": {"abonados": 26290.0, "eventuales_total": 75995.96, "eventuales_rack": 56016.09, "eventuales_apparka": 19979.87, "lavado": 1567.8, "local_comercial": 0.0, "publicidad": 2700.0, "otros_ingresos": 4928.22}, "desglose_egresos": {"alquiler": 55000.0, "personal": 7577.01, "mantenimiento": 672.84, "repuestos": 0.0, "tecnologia": 0.0, "energia": 187.64, "servicios_basicos": 633.39, "otros_egresos": 1017.3}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 111,481.98 (100.3% de PPTO, superávit de +S/ 368.96), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,958.33 vs Flash; Alquiler fue el componente principal (S/ 55,000.00, 84.7% del gasto)."}, "Camino Real": {"playa": "Camino Real", "id_playa": 22, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Saes Vergaray Lucas", "modelo_tarifario": "Fraccionado", "cajones": 280, "revpah": 951.76, "ppto": 235125.33, "flash": 260517.61, "real": 266492.11, "ago26": 341975.13, "sep25": 227138.61, "egresos_real": 63072.56, "egresos_ppto": 69863.99, "egresos_flash": 66128.17, "utilidad_real": 203419.55, "utilidad_ppto": 165261.34, "margen_deficit": 31366.78, "pct_cumpl": 113.3, "flujo_vehicular": 9791, "tickets": 9403, "pases_libres": 388, "pct_pl": 3.96, "cumplio_pl": false, "salidas_manuales": 179, "pct_sm": 1.83, "cumplio_sm": false, "tk_prom": 20.71, "pct_efec": 5.4, "pct_tarj": 94.6, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "18:00 - 19:00", "tasa_ocup_max": 78.3, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 88.5, "perm_prom_horas": 3.6, "perm_distrib": {"0_1h": 19.6, "1_2h": 14.6, "2_4h": 29.2, "mas_4h": 36.6}, "mom_rec_dif": -75483.02, "mom_rec_pct": -22.1, "mom_flujo_pct": -21.7, "yoy_rec_dif": 39353.5, "yoy_rec_pct": 17.3, "yoy_flujo_pct": 16.4, "desglose_ingresos": {"abonados": 157456.77, "eventuales_total": 52971.7, "eventuales_rack": 22298.99, "eventuales_apparka": 30672.71, "lavado": 3305.08, "local_comercial": 4816.0, "publicidad": 0.0, "otros_ingresos": 47942.56}, "desglose_egresos": {"alquiler": 0.0, "personal": 10420.58, "mantenimiento": 171.51, "repuestos": 122.24, "tecnologia": 0.0, "energia": 4407.6, "servicios_basicos": 4786.12, "otros_egresos": 47572.11}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 266,492.11 (113.3% de PPTO, superávit de +S/ 31,366.78 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 3,055.61 vs Flash: gastos controlados donde Gastos de Personal representó el 16.5% del costo (S/ 10,420.58)."}, "Ucello": {"playa": "Ucello", "id_playa": 245, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Chunga Morante Oscar", "modelo_tarifario": "Fraccionado", "cajones": 180, "revpah": 87.62, "ppto": 15772.0, "flash": 15772.0, "real": 15772.0, "ago26": 15772.43, "sep25": 12128.6, "egresos_real": 10720.28, "egresos_ppto": 12992.3, "egresos_flash": 9472.89, "utilidad_real": 5051.72, "utilidad_ppto": 2779.7, "margen_deficit": 0.0, "pct_cumpl": 100.0, "flujo_vehicular": 4427, "tickets": 4347, "pases_libres": 80, "pct_pl": 1.81, "cumplio_pl": true, "salidas_manuales": 42, "pct_sm": 0.95, "cumplio_sm": true, "tk_prom": 10.49, "pct_efec": 17.9, "pct_tarj": 82.1, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 75.3, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 93.1, "perm_prom_horas": 1.8, "perm_distrib": {"0_1h": 26.2, "1_2h": 19.7, "2_4h": 26.1, "mas_4h": 28.0}, "mom_rec_dif": -0.43, "mom_rec_pct": -0.0, "mom_flujo_pct": -0.0, "yoy_rec_dif": 3643.4, "yoy_rec_pct": 30.0, "yoy_flujo_pct": 28.5, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 0.0, "eventuales_rack": 0.0, "eventuales_apparka": 0.0, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 15772.0}, "desglose_egresos": {"alquiler": 0.0, "personal": 9266.56, "mantenimiento": 878.41, "repuestos": 0.0, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 575.31}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 15,772.00 (100.0% de PPTO, superávit de +S/ 0.00), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,247.39 vs Flash; Gastos de Personal fue el componente principal (S/ 9,266.56, 86.4% del gasto)."}, "Bernini": {"playa": "Bernini", "id_playa": 249, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Saes Vergaray Lucas", "modelo_tarifario": "Fraccionado", "cajones": 85, "revpah": 1209.31, "ppto": 108676.73, "flash": 98617.87, "real": 102791.61, "ago26": 103117.61, "sep25": 105477.04, "egresos_real": 34383.07, "egresos_ppto": 34127.75, "egresos_flash": 34106.45, "utilidad_real": 68408.54, "utilidad_ppto": 74548.98, "margen_deficit": -5885.12, "pct_cumpl": 94.6, "flujo_vehicular": 7253, "tickets": 7174, "pases_libres": 79, "pct_pl": 1.09, "cumplio_pl": true, "salidas_manuales": 25, "pct_sm": 0.34, "cumplio_sm": true, "tk_prom": 9.05, "pct_efec": 7.5, "pct_tarj": 92.5, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 86.7, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 92.5, "perm_prom_horas": 1.6, "perm_distrib": {"0_1h": 28.3, "1_2h": 20.0, "2_4h": 23.7, "mas_4h": 28.0}, "mom_rec_dif": -326.0, "mom_rec_pct": -0.3, "mom_flujo_pct": -0.3, "yoy_rec_dif": -2685.43, "yoy_rec_pct": -2.5, "yoy_flujo_pct": -2.4, "desglose_ingresos": {"abonados": 54695.96, "eventuales_total": 33673.64, "eventuales_rack": 18438.02, "eventuales_apparka": 15235.62, "lavado": 5084.75, "local_comercial": 505.95, "publicidad": 5900.0, "otros_ingresos": 2931.31}, "desglose_egresos": {"alquiler": 25285.43, "personal": 5732.14, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 56.56, "energia": 550.9, "servicios_basicos": 550.9, "otros_egresos": 2758.04}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 102,791.61 (94.6% de PPTO, brecha de S/ -5,885.12 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 276.62 vs Flash; Alquiler fue el componente principal (S/ 25,285.43, 73.5% del gasto)."}, "Choquehuanca II": {"playa": "Choquehuanca II", "id_playa": 174, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Saes Vergaray Lucas", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 0.0, "ppto": 0.0, "flash": 0.0, "real": 0.0, "ago26": 0.0, "sep25": 0.0, "egresos_real": 0.0, "egresos_ppto": 0.0, "egresos_flash": 0.0, "utilidad_real": 0.0, "utilidad_ppto": 0.0, "margen_deficit": 0.0, "pct_cumpl": 100.0, "flujo_vehicular": 2097, "tickets": 2051, "pases_libres": 46, "pct_pl": 2.19, "cumplio_pl": true, "salidas_manuales": 71, "pct_sm": 3.39, "cumplio_sm": false, "tk_prom": 15.24, "pct_efec": 11.8, "pct_tarj": 88.2, "hora_pico_in": "12:00 - 13:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 81.5, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 89.0, "perm_prom_horas": 2.6, "perm_distrib": {"0_1h": 20.6, "1_2h": 19.1, "2_4h": 24.7, "mas_4h": 35.6}, "mom_rec_dif": 0.0, "mom_rec_pct": 0.0, "mom_flujo_pct": 0.0, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 0.0, "eventuales_rack": 0.0, "eventuales_apparka": 0.0, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 0.0}, "desglose_egresos": {"alquiler": 0.0, "personal": 0.0, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 0.0}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 0.00 (100.0% de PPTO, superávit de +S/ 0.00), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 0.00 vs Flash: gastos controlados donde Alquiler representó el 0.0% del costo (S/ 0.00)."}, "El Derby 155": {"playa": "El Derby 155", "id_playa": 397, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Chunga Morante Oscar", "modelo_tarifario": "Fraccionado", "cajones": 65, "revpah": 853.29, "ppto": 53226.42, "flash": 53060.48, "real": 55463.85, "ago26": 54610.73, "sep25": 113508.0, "egresos_real": 31297.22, "egresos_ppto": 33282.1, "egresos_flash": 31361.14, "utilidad_real": 24166.63, "utilidad_ppto": 19944.32, "margen_deficit": 2237.43, "pct_cumpl": 104.2, "flujo_vehicular": 1677, "tickets": 1634, "pases_libres": 43, "pct_pl": 2.56, "cumplio_pl": true, "salidas_manuales": 57, "pct_sm": 3.4, "cumplio_sm": false, "tk_prom": 24.15, "pct_efec": 4.5, "pct_tarj": 95.5, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 77.1, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 92.0, "perm_prom_horas": 4.2, "perm_distrib": {"0_1h": 13.4, "1_2h": 14.0, "2_4h": 28.4, "mas_4h": 44.2}, "mom_rec_dif": 853.12, "mom_rec_pct": 1.6, "mom_flujo_pct": 1.6, "yoy_rec_dif": -58044.15, "yoy_rec_pct": -51.1, "yoy_flujo_pct": -48.5, "desglose_ingresos": {"abonados": 33332.19, "eventuales_total": 17902.99, "eventuales_rack": 9202.15, "eventuales_apparka": 8700.84, "lavado": 296.61, "local_comercial": 0.0, "publicidad": 812.4, "otros_ingresos": 3119.66}, "desglose_egresos": {"alquiler": 16800.0, "personal": 4335.26, "mantenimiento": 3910.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 274.63, "servicios_basicos": 592.05, "otros_egresos": 5659.91}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 55,463.85 (104.2% de PPTO, superávit de +S/ 2,237.43), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 63.92 vs Flash: gastos controlados donde Alquiler representó el 53.7% del costo (S/ 16,800.00)."}, "Manuel Bañon II": {"playa": "Manuel Bañon II", "id_playa": 170, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Saes Vergaray Lucas", "modelo_tarifario": "Fraccionado", "cajones": 40, "revpah": 1080.99, "ppto": 35473.0, "flash": 46968.32, "real": 43239.65, "ago26": 40067.31, "sep25": 0.0, "egresos_real": 19103.05, "egresos_ppto": 16607.51, "egresos_flash": 19212.95, "utilidad_real": 24136.6, "utilidad_ppto": 18865.49, "margen_deficit": 7766.65, "pct_cumpl": 121.9, "flujo_vehicular": 2866, "tickets": 2814, "pases_libres": 52, "pct_pl": 1.81, "cumplio_pl": true, "salidas_manuales": 114, "pct_sm": 3.98, "cumplio_sm": false, "tk_prom": 12.88, "pct_efec": 9.9, "pct_tarj": 90.1, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 81.6, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 88.0, "perm_prom_horas": 2.2, "perm_distrib": {"0_1h": 25.8, "1_2h": 19.1, "2_4h": 25.9, "mas_4h": 29.2}, "mom_rec_dif": 3172.34, "mom_rec_pct": 7.9, "mom_flujo_pct": 7.7, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 20726.43, "eventuales_total": 15863.98, "eventuales_rack": 8086.02, "eventuales_apparka": 7777.96, "lavado": 508.48, "local_comercial": 5266.74, "publicidad": 0.0, "otros_ingresos": 874.02}, "desglose_egresos": {"alquiler": 12139.2, "personal": 2874.26, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 207.83, "servicios_basicos": 279.27, "otros_egresos": 3810.32}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 43,239.65 (121.9% de PPTO, superávit de +S/ 7,766.65 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 109.90 vs Flash: gastos controlados donde Alquiler representó el 63.5% del costo (S/ 12,139.20)."}, "Manuel Bañon": {"playa": "Manuel Bañon", "id_playa": 171, "zona": "Angela Ramos", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Saes Vergaray Lucas", "modelo_tarifario": "Fraccionado", "cajones": 35, "revpah": 21.27, "ppto": 0.0, "flash": 2277.13, "real": 744.54, "ago26": 15092.82, "sep25": 53917.25, "egresos_real": 6225.5, "egresos_ppto": 0.0, "egresos_flash": 5720.3, "utilidad_real": -5480.96, "utilidad_ppto": 0.0, "margen_deficit": 744.54, "pct_cumpl": 100.0, "flujo_vehicular": 150, "tickets": 148, "pases_libres": 2, "pct_pl": 1.33, "cumplio_pl": true, "salidas_manuales": 1, "pct_sm": 0.67, "cumplio_sm": true, "tk_prom": 12.88, "pct_efec": 9.9, "pct_tarj": 90.1, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 73.4, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 89.5, "perm_prom_horas": 2.2, "perm_distrib": {"0_1h": 25.0, "1_2h": 19.4, "2_4h": 25.4, "mas_4h": 30.2}, "mom_rec_dif": -14348.28, "mom_rec_pct": -95.1, "mom_flujo_pct": -93.2, "yoy_rec_dif": -53172.71, "yoy_rec_pct": -98.6, "yoy_flujo_pct": -93.7, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 0.0, "eventuales_rack": 0.0, "eventuales_apparka": 0.0, "lavado": 254.24, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 490.3}, "desglose_egresos": {"alquiler": 2532.05, "personal": 4.91, "mantenimiento": 2500.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 479.31, "servicios_basicos": 399.31, "otros_egresos": 789.23}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 744.54 (100.0% de PPTO, superávit de +S/ 744.54), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -5,480.96: el costo principal fue Alquiler con S/ 2,532.05 (40.7% del costo total)."}, "Caceres": {"playa": "Caceres", "id_playa": 9, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Huamaní León Dayana", "modelo_tarifario": "Fraccionado", "cajones": 320, "revpah": 1410.86, "ppto": 429206.44, "flash": 454490.39, "real": 451474.84, "ago26": 447922.69, "sep25": 410533.38, "egresos_real": 111615.85, "egresos_ppto": 107798.02, "egresos_flash": 109922.61, "utilidad_real": 339858.99, "utilidad_ppto": 321408.43, "margen_deficit": 22268.4, "pct_cumpl": 105.2, "flujo_vehicular": 16147, "tickets": 16057, "pases_libres": 90, "pct_pl": 0.56, "cumplio_pl": true, "salidas_manuales": 93, "pct_sm": 0.58, "cumplio_sm": true, "tk_prom": 24.63, "pct_efec": 3.4, "pct_tarj": 96.6, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 82.0, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 84.2, "perm_prom_horas": 4.2, "perm_distrib": {"0_1h": 15.8, "1_2h": 13.1, "2_4h": 29.9, "mas_4h": 41.2}, "mom_rec_dif": 3552.15, "mom_rec_pct": 0.8, "mom_flujo_pct": 0.8, "yoy_rec_dif": 40941.46, "yoy_rec_pct": 10.0, "yoy_flujo_pct": 9.5, "desglose_ingresos": {"abonados": 316670.95, "eventuales_total": 119619.62, "eventuales_rack": 57290.46, "eventuales_apparka": 62329.16, "lavado": 6779.66, "local_comercial": 3894.6, "publicidad": 0.0, "otros_ingresos": 4510.01}, "desglose_egresos": {"alquiler": 18655.69, "personal": 7062.23, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 2860.74, "servicios_basicos": 3677.53, "otros_egresos": 82220.4}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 451,474.84 (105.2% de PPTO, superávit de +S/ 22,268.40 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,693.24 vs Flash; Alquiler fue el componente principal (S/ 18,655.69, 16.7% del gasto)."}, "Derteano": {"playa": "Derteano", "id_playa": 10, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Salas Chiang Bruno", "modelo_tarifario": "Fraccionado", "cajones": 140, "revpah": 2273.93, "ppto": 338841.67, "flash": 316657.59, "real": 318349.93, "ago26": 311116.43, "sep25": 338922.72, "egresos_real": 106158.3, "egresos_ppto": 112286.06, "egresos_flash": 105659.84, "utilidad_real": 212191.63, "utilidad_ppto": 226555.61, "margen_deficit": -20491.74, "pct_cumpl": 94.0, "flujo_vehicular": 10135, "tickets": 10087, "pases_libres": 48, "pct_pl": 0.47, "cumplio_pl": true, "salidas_manuales": 16, "pct_sm": 0.16, "cumplio_sm": true, "tk_prom": 24.69, "pct_efec": 2.1, "pct_tarj": 97.9, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 81.7, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 95.8, "perm_prom_horas": 4.3, "perm_distrib": {"0_1h": 14.5, "1_2h": 13.1, "2_4h": 29.6, "mas_4h": 42.8}, "mom_rec_dif": 7233.5, "mom_rec_pct": 2.3, "mom_flujo_pct": 2.3, "yoy_rec_dif": -20572.79, "yoy_rec_pct": -6.1, "yoy_flujo_pct": -5.8, "desglose_ingresos": {"abonados": 201799.0, "eventuales_total": 55764.54, "eventuales_rack": 30965.77, "eventuales_apparka": 24798.77, "lavado": 2627.12, "local_comercial": 38171.0, "publicidad": 0.0, "otros_ingresos": 19988.27}, "desglose_egresos": {"alquiler": 12661.29, "personal": 5161.3, "mantenimiento": 2380.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 8812.81, "servicios_basicos": 9053.66, "otros_egresos": 76902.05}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 318,349.93 (94.0% de PPTO, brecha de S/ -20,491.74 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 498.46 vs Flash; Alquiler fue el componente principal (S/ 12,661.29, 11.9% del gasto)."}, "Javier Prado Este": {"playa": "Javier Prado Este", "id_playa": 65, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Huamaní León Dayana", "modelo_tarifario": "Fraccionado", "cajones": 90, "revpah": 1297.23, "ppto": 126518.83, "flash": 114623.71, "real": 116750.53, "ago26": 126326.86, "sep25": 131822.03, "egresos_real": 60043.42, "egresos_ppto": 60966.33, "egresos_flash": 61528.14, "utilidad_real": 56707.11, "utilidad_ppto": 65552.5, "margen_deficit": -9768.3, "pct_cumpl": 92.3, "flujo_vehicular": 5879, "tickets": 5847, "pases_libres": 32, "pct_pl": 0.54, "cumplio_pl": true, "salidas_manuales": 35, "pct_sm": 0.6, "cumplio_sm": true, "tk_prom": 19.79, "pct_efec": 6.5, "pct_tarj": 93.5, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 80.8, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 91.4, "perm_prom_horas": 3.4, "perm_distrib": {"0_1h": 19.8, "1_2h": 15.5, "2_4h": 28.3, "mas_4h": 36.4}, "mom_rec_dif": -9576.33, "mom_rec_pct": -7.6, "mom_flujo_pct": -7.4, "yoy_rec_dif": -15071.5, "yoy_rec_pct": -11.4, "yoy_flujo_pct": -10.8, "desglose_ingresos": {"abonados": 56918.27, "eventuales_total": 44998.41, "eventuales_rack": 18189.08, "eventuales_apparka": 26809.33, "lavado": 5295.34, "local_comercial": 1105.95, "publicidad": 0.0, "otros_ingresos": 8432.56}, "desglose_egresos": {"alquiler": 47740.5, "personal": 3029.58, "mantenimiento": 1240.6, "repuestos": 0.0, "tecnologia": 57.36, "energia": 447.05, "servicios_basicos": 883.21, "otros_egresos": 7092.17}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 116,750.53 (92.3% de PPTO, brecha de S/ -9,768.30 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 1,484.72 vs Flash: gastos controlados donde Alquiler representó el 79.5% del costo (S/ 47,740.50)."}, "Clinica Javier Prado": {"playa": "Clinica Javier Prado", "id_playa": 362, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Huamaní León Dayana", "modelo_tarifario": "Fraccionado", "cajones": 85, "revpah": 523.84, "ppto": 42369.3, "flash": 39074.75, "real": 44526.47, "ago26": 43233.59, "sep25": 0.0, "egresos_real": 22483.95, "egresos_ppto": 22953.84, "egresos_flash": 19148.85, "utilidad_real": 22042.52, "utilidad_ppto": 19415.46, "margen_deficit": 2157.17, "pct_cumpl": 105.1, "flujo_vehicular": 4601, "tickets": 4593, "pases_libres": 8, "pct_pl": 0.17, "cumplio_pl": true, "salidas_manuales": 7, "pct_sm": 0.15, "cumplio_sm": true, "tk_prom": 10.0, "pct_efec": 13.9, "pct_tarj": 86.1, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 80.9, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 89.0, "perm_prom_horas": 1.7, "perm_distrib": {"0_1h": 27.4, "1_2h": 20.0, "2_4h": 23.4, "mas_4h": 29.2}, "mom_rec_dif": 1292.88, "mom_rec_pct": 3.0, "mom_flujo_pct": 2.9, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 36159.2, "eventuales_rack": 35102.87, "eventuales_apparka": 1056.33, "lavado": 2627.12, "local_comercial": 0.0, "publicidad": 5400.0, "otros_ingresos": 340.15}, "desglose_egresos": {"alquiler": 15500.0, "personal": 5155.07, "mantenimiento": 0.0, "repuestos": 490.0, "tecnologia": 41.86, "energia": 144.1, "servicios_basicos": 15.19, "otros_egresos": 1281.83}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 44,526.47 (105.1% de PPTO, superávit de +S/ 2,157.17 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 3,335.10 vs Flash; Alquiler fue el componente principal (S/ 15,500.00, 68.9% del gasto)."}, "Canaval y Moreyra 505": {"playa": "Canaval y Moreyra 505", "id_playa": 582, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Salas Chiang Bruno", "modelo_tarifario": "Fraccionado", "cajones": 110, "revpah": 949.71, "ppto": 127694.77, "flash": 101283.4, "real": 104467.98, "ago26": 104484.0, "sep25": 79171.74, "egresos_real": 35679.91, "egresos_ppto": 35688.96, "egresos_flash": 37183.14, "utilidad_real": 68788.07, "utilidad_ppto": 92005.81, "margen_deficit": -23226.79, "pct_cumpl": 81.8, "flujo_vehicular": 2430, "tickets": 2417, "pases_libres": 13, "pct_pl": 0.53, "cumplio_pl": true, "salidas_manuales": 1, "pct_sm": 0.04, "cumplio_sm": true, "tk_prom": 26.21, "pct_efec": 5.3, "pct_tarj": 94.7, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "16:00 - 17:00", "tasa_ocup_max": 76.6, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 92.0, "perm_prom_horas": 4.5, "perm_distrib": {"0_1h": 15.1, "1_2h": 11.9, "2_4h": 31.0, "mas_4h": 42.0}, "mom_rec_dif": -16.02, "mom_rec_pct": -0.0, "mom_flujo_pct": -0.0, "yoy_rec_dif": 25296.24, "yoy_rec_pct": 32.0, "yoy_flujo_pct": 30.4, "desglose_ingresos": {"abonados": 62067.24, "eventuales_total": 35209.57, "eventuales_rack": 17596.2, "eventuales_apparka": 17613.37, "lavado": 1694.91, "local_comercial": 0.0, "publicidad": 2731.0, "otros_ingresos": 2765.26}, "desglose_egresos": {"alquiler": 28394.36, "personal": 1966.01, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 85.01, "energia": 266.99, "servicios_basicos": 770.79, "otros_egresos": 4463.74}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 104,467.98 (81.8% de PPTO, brecha de S/ -23,226.79 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 1,503.23 vs Flash: gastos controlados donde Alquiler representó el 79.6% del costo (S/ 28,394.36)."}, "Juan de Arona 779": {"playa": "Juan de Arona 779", "id_playa": 279, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Salas Chiang Bruno", "modelo_tarifario": "Fraccionado", "cajones": 75, "revpah": 493.4, "ppto": 35450.28, "flash": 33505.62, "real": 37005.19, "ago26": 36386.82, "sep25": 35993.85, "egresos_real": 24643.67, "egresos_ppto": 25869.13, "egresos_flash": 25843.12, "utilidad_real": 12361.52, "utilidad_ppto": 9581.15, "margen_deficit": 1554.91, "pct_cumpl": 104.4, "flujo_vehicular": 2751, "tickets": 2744, "pases_libres": 7, "pct_pl": 0.25, "cumplio_pl": true, "salidas_manuales": 20, "pct_sm": 0.73, "cumplio_sm": true, "tk_prom": 13.57, "pct_efec": 23.0, "pct_tarj": 77.0, "hora_pico_in": "11:00 - 12:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 80.1, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 90.0, "perm_prom_horas": 2.3, "perm_distrib": {"0_1h": 22.1, "1_2h": 20.0, "2_4h": 24.1, "mas_4h": 33.8}, "mom_rec_dif": 618.37, "mom_rec_pct": 1.7, "mom_flujo_pct": 1.7, "yoy_rec_dif": 1011.34, "yoy_rec_pct": 2.8, "yoy_flujo_pct": 2.7, "desglose_ingresos": {"abonados": 150.0, "eventuales_total": 30242.07, "eventuales_rack": 27327.65, "eventuales_apparka": 2914.42, "lavado": 762.7, "local_comercial": 1350.83, "publicidad": 3512.4, "otros_ingresos": 987.19}, "desglose_egresos": {"alquiler": 18627.68, "personal": 2769.72, "mantenimiento": 646.1, "repuestos": 0.0, "tecnologia": 0.0, "energia": 701.8, "servicios_basicos": 1099.0, "otros_egresos": 1501.17}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 37,005.19 (104.4% de PPTO, superávit de +S/ 1,554.91), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 1,199.45 vs Flash: gastos controlados donde Alquiler representó el 75.6% del costo (S/ 18,627.68)."}, "Juan de Arona II": {"playa": "Juan de Arona II", "id_playa": 172, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Salas Chiang Bruno", "modelo_tarifario": "Fraccionado", "cajones": 70, "revpah": 348.71, "ppto": 27156.47, "flash": 24793.19, "real": 24409.37, "ago26": 24475.85, "sep25": 28608.43, "egresos_real": 23918.2, "egresos_ppto": 22798.15, "egresos_flash": 22397.64, "utilidad_real": 491.17, "utilidad_ppto": 4358.32, "margen_deficit": -2747.1, "pct_cumpl": 89.9, "flujo_vehicular": 1996, "tickets": 1981, "pases_libres": 15, "pct_pl": 0.75, "cumplio_pl": true, "salidas_manuales": 35, "pct_sm": 1.75, "cumplio_sm": false, "tk_prom": 14.54, "pct_efec": 24.9, "pct_tarj": 75.1, "hora_pico_in": "10:00 - 11:00", "hora_pico_out": "14:00 - 15:00", "tasa_ocup_max": 77.4, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 89.0, "perm_prom_horas": 2.5, "perm_distrib": {"0_1h": 22.7, "1_2h": 18.8, "2_4h": 25.5, "mas_4h": 33.0}, "mom_rec_dif": -66.48, "mom_rec_pct": -0.3, "mom_flujo_pct": -0.3, "yoy_rec_dif": -4199.06, "yoy_rec_pct": -14.7, "yoy_flujo_pct": -14.0, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 23971.57, "eventuales_rack": 20973.55, "eventuales_apparka": 2998.02, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 406.2, "otros_ingresos": 31.6}, "desglose_egresos": {"alquiler": 16974.4, "personal": 2153.87, "mantenimiento": 2416.55, "repuestos": 250.06, "tecnologia": 28.45, "energia": 136.7, "servicios_basicos": 47.2, "otros_egresos": 2047.67}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 24,409.37 (89.9% de PPTO, brecha de S/ -2,747.10 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,520.56 vs Flash; Alquiler fue el componente principal (S/ 16,974.40, 71.0% del gasto)."}, "Seminario": {"playa": "Seminario", "id_playa": 619, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Huamaní León Dayana", "modelo_tarifario": "Fraccionado", "cajones": 60, "revpah": 2291.42, "ppto": 103420.17, "flash": 147788.42, "real": 137485.09, "ago26": 142601.86, "sep25": 0.0, "egresos_real": 78857.89, "egresos_ppto": 80033.87, "egresos_flash": 71481.4, "utilidad_real": 58627.2, "utilidad_ppto": 23386.3, "margen_deficit": 34064.92, "pct_cumpl": 132.9, "flujo_vehicular": 8430, "tickets": 8266, "pases_libres": 164, "pct_pl": 1.95, "cumplio_pl": true, "salidas_manuales": 142, "pct_sm": 1.68, "cumplio_sm": false, "tk_prom": 20.5, "pct_efec": 8.5, "pct_tarj": 91.5, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "14:00 - 15:00", "tasa_ocup_max": 94.1, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 50.0, "perm_prom_horas": 3.5, "perm_distrib": {"0_1h": 18.5, "1_2h": 15.5, "2_4h": 28.0, "mas_4h": 38.0}, "mom_rec_dif": -5116.77, "mom_rec_pct": -3.6, "mom_flujo_pct": -3.5, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 115711.62, "eventuales_total": 20576.86, "eventuales_rack": 14221.34, "eventuales_apparka": 6355.52, "lavado": 1016.95, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 179.66}, "desglose_egresos": {"alquiler": 69880.21, "personal": 3690.84, "mantenimiento": 592.65, "repuestos": 0.0, "tecnologia": 0.0, "energia": 650.75, "servicios_basicos": 776.31, "otros_egresos": 3917.88}, "comentario_ingresos": "Desempeño sobresaliente cerrando en S/ 137,485.09 (132.9% de PPTO, superávit de +S/ 34,064.92 vs PPTO), impulsada por sólida demanda eventual y rotación por Apparka.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 7,376.49 vs Flash; Alquiler fue el componente principal (S/ 69,880.21, 88.6% del gasto)."}, "Clinica Javier Prado II": {"playa": "Clinica Javier Prado II", "id_playa": 464, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Huamaní León Dayana", "modelo_tarifario": "Fraccionado", "cajones": 65, "revpah": 190.15, "ppto": 12934.52, "flash": 13969.3, "real": 12359.95, "ago26": 13346.5, "sep25": 39031.49, "egresos_real": 4831.48, "egresos_ppto": 4253.38, "egresos_flash": 7223.18, "utilidad_real": 7528.47, "utilidad_ppto": 8681.14, "margen_deficit": -574.57, "pct_cumpl": 95.6, "flujo_vehicular": 1930, "tickets": 1844, "pases_libres": 86, "pct_pl": 4.46, "cumplio_pl": false, "salidas_manuales": 17, "pct_sm": 0.88, "cumplio_sm": true, "tk_prom": 7.68, "pct_efec": 14.0, "pct_tarj": 86.0, "hora_pico_in": "10:00 - 11:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 79.2, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 87.0, "perm_prom_horas": 1.3, "perm_distrib": {"0_1h": 27.9, "1_2h": 20.0, "2_4h": 24.1, "mas_4h": 28.0}, "mom_rec_dif": -986.55, "mom_rec_pct": -7.4, "mom_flujo_pct": -7.3, "yoy_rec_dif": -26671.54, "yoy_rec_pct": -68.3, "yoy_flujo_pct": -64.9, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 12338.77, "eventuales_rack": 11959.6, "eventuales_apparka": 379.17, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 21.18}, "desglose_egresos": {"alquiler": 0.0, "personal": 3306.42, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 19.96, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 1505.1}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 12,359.95 (95.6% de PPTO, brecha de S/ -574.57 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 2,391.70 vs Flash: gastos controlados donde Gastos de Personal representó el 68.4% del costo (S/ 3,306.42)."}, "Limatambo": {"playa": "Limatambo", "id_playa": 361, "zona": "Alex Huamán", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Salas Chiang Bruno", "modelo_tarifario": "Fraccionado", "cajones": 55, "revpah": 1613.63, "ppto": 79391.57, "flash": 88953.72, "real": 88749.74, "ago26": 89731.27, "sep25": 69726.66, "egresos_real": 52358.34, "egresos_ppto": 51501.17, "egresos_flash": 51955.39, "utilidad_real": 36391.4, "utilidad_ppto": 27890.4, "margen_deficit": 9358.17, "pct_cumpl": 111.8, "flujo_vehicular": 1330, "tickets": 1298, "pases_libres": 32, "pct_pl": 2.41, "cumplio_pl": true, "salidas_manuales": 15, "pct_sm": 1.13, "cumplio_sm": false, "tk_prom": 6.9, "pct_efec": 14.6, "pct_tarj": 85.4, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 76.1, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 86.0, "perm_prom_horas": 1.2, "perm_distrib": {"0_1h": 29.1, "1_2h": 20.0, "2_4h": 22.9, "mas_4h": 28.0}, "mom_rec_dif": -981.53, "mom_rec_pct": -1.1, "mom_flujo_pct": -1.1, "yoy_rec_dif": 19023.08, "yoy_rec_pct": 27.3, "yoy_flujo_pct": 25.9, "desglose_ingresos": {"abonados": 67400.54, "eventuales_total": 11440.8, "eventuales_rack": 3266.02, "eventuales_apparka": 8174.78, "lavado": 5371.43, "local_comercial": 2826.58, "publicidad": 0.0, "otros_ingresos": 1710.39}, "desglose_egresos": {"alquiler": 37928.14, "personal": 5397.37, "mantenimiento": 531.36, "repuestos": 250.06, "tecnologia": 21.9, "energia": 504.93, "servicios_basicos": 984.24, "otros_egresos": 7245.27}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 88,749.74 (111.8% de PPTO, superávit de +S/ 9,358.17 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 402.95 vs Flash; Alquiler fue el componente principal (S/ 37,928.14, 72.4% del gasto)."}, "Kennedy": {"playa": "Kennedy", "id_playa": 239, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Sup. Kennedy", "modelo_tarifario": "Fraccionado", "cajones": 350, "revpah": 1114.79, "ppto": 466770.14, "flash": 426571.87, "real": 390176.68, "ago26": 431945.03, "sep25": 36157.48, "egresos_real": 246040.62, "egresos_ppto": 259323.49, "egresos_flash": 255050.47, "utilidad_real": 144136.06, "utilidad_ppto": 207446.65, "margen_deficit": -76593.46, "pct_cumpl": 83.6, "flujo_vehicular": 28645, "tickets": 26882, "pases_libres": 1763, "pct_pl": 6.15, "cumplio_pl": false, "salidas_manuales": 309, "pct_sm": 1.08, "cumplio_sm": false, "tk_prom": 13.61, "pct_efec": 6.0, "pct_tarj": 94.0, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 86.2, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 98.4, "perm_prom_horas": 2.2, "perm_distrib": {"0_1h": 52.8, "1_2h": 22.0, "2_4h": 13.8, "mas_4h": 11.4}, "mom_rec_dif": -41768.35, "mom_rec_pct": -9.7, "mom_flujo_pct": -9.5, "yoy_rec_dif": 354019.2, "yoy_rec_pct": 979.1, "yoy_flujo_pct": 930.1, "desglose_ingresos": {"abonados": 157817.45, "eventuales_total": 237107.1, "eventuales_rack": 197724.57, "eventuales_apparka": 39382.53, "lavado": 6440.68, "local_comercial": 1255.95, "publicidad": -22080.0, "otros_ingresos": 9635.5}, "desglose_egresos": {"alquiler": 28281.66, "personal": 0.0, "mantenimiento": 15783.72, "repuestos": 0.0, "tecnologia": 0.0, "energia": 8368.66, "servicios_basicos": 9300.1, "otros_egresos": 192675.14}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 390,176.68 (83.6% de PPTO, brecha de S/ -76,593.46 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 9,009.85 vs Flash: gastos controlados donde Alquiler representó el 11.5% del costo (S/ 28,281.66)."}, "Ovalo Gutierrez": {"playa": "Ovalo Gutierrez", "id_playa": 54, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Dominguez Geldres Yvon", "modelo_tarifario": "Fraccionado", "cajones": 160, "revpah": 1281.52, "ppto": 207132.88, "flash": 206537.23, "real": 205042.52, "ago26": 231606.35, "sep25": 173615.04, "egresos_real": 108070.95, "egresos_ppto": 100005.77, "egresos_flash": 101234.31, "utilidad_real": 96971.57, "utilidad_ppto": 107127.11, "margen_deficit": -2090.36, "pct_cumpl": 99.0, "flujo_vehicular": 7657, "tickets": 7618, "pases_libres": 39, "pct_pl": 0.51, "cumplio_pl": true, "salidas_manuales": 33, "pct_sm": 0.43, "cumplio_sm": true, "tk_prom": 19.28, "pct_efec": 6.4, "pct_tarj": 93.6, "hora_pico_in": "07:00 - 08:00", "hora_pico_out": "16:00 - 17:00", "tasa_ocup_max": 81.6, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 96.5, "perm_prom_horas": 3.1, "perm_distrib": {"0_1h": 49.6, "1_2h": 23.1, "2_4h": 17.3, "mas_4h": 10.0}, "mom_rec_dif": -26563.83, "mom_rec_pct": -11.5, "mom_flujo_pct": -11.3, "yoy_rec_dif": 31427.48, "yoy_rec_pct": 18.1, "yoy_flujo_pct": 17.2, "desglose_ingresos": {"abonados": 70822.09, "eventuales_total": 79276.4, "eventuales_rack": 64870.79, "eventuales_apparka": 14405.61, "lavado": 3559.32, "local_comercial": 3945.95, "publicidad": 600.0, "otros_ingresos": 46838.76}, "desglose_egresos": {"alquiler": 12364.52, "personal": 10311.7, "mantenimiento": 4849.85, "repuestos": 882.19, "tecnologia": 0.0, "energia": 5681.34, "servicios_basicos": 6191.6, "otros_egresos": 73471.09}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 205,042.52 (99.0% de PPTO, brecha de S/ -2,090.36 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 6,836.64 vs Flash; Alquiler fue el componente principal (S/ 12,364.52, 11.4% del gasto)."}, "Miraflores": {"playa": "Miraflores", "id_playa": 16, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Lliuyacc Castillo Evelin", "modelo_tarifario": "Fraccionado", "cajones": 120, "revpah": 595.69, "ppto": 70663.68, "flash": 67601.87, "real": 71482.81, "ago26": 81274.06, "sep25": 59537.44, "egresos_real": 33363.28, "egresos_ppto": 32389.63, "egresos_flash": 33953.44, "utilidad_real": 38119.53, "utilidad_ppto": 38274.05, "margen_deficit": 819.13, "pct_cumpl": 101.2, "flujo_vehicular": 4007, "tickets": 3963, "pases_libres": 44, "pct_pl": 1.1, "cumplio_pl": true, "salidas_manuales": 38, "pct_sm": 0.95, "cumplio_sm": true, "tk_prom": 21.8, "pct_efec": 12.6, "pct_tarj": 87.4, "hora_pico_in": "13:00 - 14:00", "hora_pico_out": "19:00 - 20:00", "tasa_ocup_max": 77.3, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 94.2, "perm_prom_horas": 3.5, "perm_distrib": {"0_1h": 43.4, "1_2h": 25.5, "2_4h": 17.9, "mas_4h": 13.2}, "mom_rec_dif": -9791.25, "mom_rec_pct": -12.0, "mom_flujo_pct": -11.8, "yoy_rec_dif": 11945.37, "yoy_rec_pct": 20.1, "yoy_flujo_pct": 19.1, "desglose_ingresos": {"abonados": 3183.62, "eventuales_total": 65964.66, "eventuales_rack": 47147.78, "eventuales_apparka": 18816.88, "lavado": 296.61, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 2037.92}, "desglose_egresos": {"alquiler": 26250.0, "personal": 0.0, "mantenimiento": 2572.14, "repuestos": 0.0, "tecnologia": 0.0, "energia": 111.87, "servicios_basicos": 405.24, "otros_egresos": 4135.9}, "comentario_ingresos": "Cumplió el presupuesto comercial con S/ 71,482.81 (101.2% de PPTO, superávit de +S/ 819.13), con ocupación vehicular estable durante el mes.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 590.16 vs Flash: gastos controlados donde Alquiler representó el 78.7% del costo (S/ 26,250.00)."}, "Galerias": {"playa": "Galerias", "id_playa": 12, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Dominguez Geldres Yvon", "modelo_tarifario": "Fraccionado", "cajones": 85, "revpah": 753.06, "ppto": 57902.32, "flash": 64655.44, "real": 64009.84, "ago26": 76330.03, "sep25": 57600.68, "egresos_real": 24986.46, "egresos_ppto": 25382.44, "egresos_flash": 24979.8, "utilidad_real": 39023.38, "utilidad_ppto": 32519.88, "margen_deficit": 6107.52, "pct_cumpl": 110.5, "flujo_vehicular": 4691, "tickets": 4643, "pases_libres": 48, "pct_pl": 1.02, "cumplio_pl": true, "salidas_manuales": 56, "pct_sm": 1.19, "cumplio_sm": false, "tk_prom": 16.25, "pct_efec": 23.7, "pct_tarj": 76.3, "hora_pico_in": "16:00 - 17:00", "hora_pico_out": "20:00 - 21:00", "tasa_ocup_max": 81.0, "rango_max_ocup": "18:00 - 21:00", "lpr_real": 62.0, "perm_prom_horas": 2.6, "perm_distrib": {"0_1h": 53.6, "1_2h": 21.6, "2_4h": 15.8, "mas_4h": 9.0}, "mom_rec_dif": -12320.19, "mom_rec_pct": -16.1, "mom_flujo_pct": -15.8, "yoy_rec_dif": 6409.16, "yoy_rec_pct": 11.1, "yoy_flujo_pct": 10.5, "desglose_ingresos": {"abonados": 338.98, "eventuales_total": 62582.74, "eventuales_rack": 55642.4, "eventuales_apparka": 6940.34, "lavado": 508.47, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 579.65}, "desglose_egresos": {"alquiler": 17920.3, "personal": 4810.63, "mantenimiento": 45.76, "repuestos": 500.22, "tecnologia": 92.21, "energia": 123.5, "servicios_basicos": 123.5, "otros_egresos": 1493.84}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 64,009.84 (110.5% de PPTO, superávit de +S/ 6,107.52 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 6.66 vs Flash; Alquiler fue el componente principal (S/ 17,920.30, 71.7% del gasto)."}, "Mariscal Castilla": {"playa": "Mariscal Castilla", "id_playa": 388, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Lliuyacc Castillo Evelin", "modelo_tarifario": "Fraccionado", "cajones": 70, "revpah": 589.57, "ppto": 60450.34, "flash": 40481.44, "real": 41269.93, "ago26": 56247.15, "sep25": 0.0, "egresos_real": 43769.93, "egresos_ppto": 46008.12, "egresos_flash": 44988.98, "utilidad_real": -2500.0, "utilidad_ppto": 14442.22, "margen_deficit": -19180.41, "pct_cumpl": 68.3, "flujo_vehicular": 2332, "tickets": 2300, "pases_libres": 32, "pct_pl": 1.37, "cumplio_pl": true, "salidas_manuales": 34, "pct_sm": 1.46, "cumplio_sm": false, "tk_prom": 19.38, "pct_efec": 15.0, "pct_tarj": 85.0, "hora_pico_in": "20:00 - 21:00", "hora_pico_out": "21:00 - 22:00", "tasa_ocup_max": 78.9, "rango_max_ocup": "18:00 - 21:00", "lpr_real": 91.0, "perm_prom_horas": 3.1, "perm_distrib": {"0_1h": 47.6, "1_2h": 23.9, "2_4h": 16.9, "mas_4h": 11.6}, "mom_rec_dif": -14977.22, "mom_rec_pct": -26.6, "mom_flujo_pct": -26.1, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 745.77, "eventuales_total": 39591.96, "eventuales_rack": 27827.99, "eventuales_apparka": 11763.97, "lavado": 423.73, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 508.47}, "desglose_egresos": {"alquiler": 36338.4, "personal": 4367.38, "mantenimiento": 571.96, "repuestos": 0.0, "tecnologia": 34.66, "energia": 235.29, "servicios_basicos": 450.63, "otros_egresos": 2006.9}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 41,269.93 (68.3% de PPTO, brecha de S/ -19,180.41 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -2,500.00: el costo principal fue Alquiler con S/ 36,338.40 (83.0% del costo total)."}, "Metro Barranco": {"playa": "Metro Barranco", "id_playa": 467, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Lliuyacc Castillo Evelin", "modelo_tarifario": "Fraccionado", "cajones": 65, "revpah": 911.55, "ppto": 62652.56, "flash": 55203.22, "real": 59250.5, "ago26": 64693.65, "sep25": 0.0, "egresos_real": 29216.03, "egresos_ppto": 34002.65, "egresos_flash": 35495.57, "utilidad_real": 30034.47, "utilidad_ppto": 28649.9, "margen_deficit": -3402.06, "pct_cumpl": 94.6, "flujo_vehicular": 8692, "tickets": 8337, "pases_libres": 355, "pct_pl": 4.08, "cumplio_pl": false, "salidas_manuales": 140, "pct_sm": 1.61, "cumplio_sm": false, "tk_prom": 5.68, "pct_efec": 18.4, "pct_tarj": 81.6, "hora_pico_in": "13:00 - 14:00", "hora_pico_out": "18:00 - 19:00", "tasa_ocup_max": 91.6, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 92.0, "perm_prom_horas": 0.9, "perm_distrib": {"0_1h": 67.2, "1_2h": 16.5, "2_4h": 10.7, "mas_4h": 5.6}, "mom_rec_dif": -5443.15, "mom_rec_pct": -8.4, "mom_flujo_pct": -8.2, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 1133.4, "eventuales_total": 40354.08, "eventuales_rack": 30402.83, "eventuales_apparka": 9951.25, "lavado": 3601.7, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 14161.32}, "desglose_egresos": {"alquiler": 18132.98, "personal": 7251.37, "mantenimiento": 461.23, "repuestos": 0.0, "tecnologia": 100.51, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 3269.94}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 59,250.50 (94.6% de PPTO, brecha de S/ -3,402.06 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 6,279.54 vs Flash: gastos controlados donde Alquiler representó el 62.1% del costo (S/ 18,132.98)."}, "Dasso": {"playa": "Dasso", "id_playa": 91, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Dominguez Geldres Yvon", "modelo_tarifario": "Fraccionado", "cajones": 60, "revpah": 937.9, "ppto": 59364.88, "flash": 60410.6, "real": 56274.13, "ago26": 59050.67, "sep25": 56448.55, "egresos_real": 34075.2, "egresos_ppto": 32638.15, "egresos_flash": 33014.25, "utilidad_real": 22198.93, "utilidad_ppto": 26726.73, "margen_deficit": -3090.75, "pct_cumpl": 94.8, "flujo_vehicular": 2667, "tickets": 2662, "pases_libres": 5, "pct_pl": 0.19, "cumplio_pl": true, "salidas_manuales": 3, "pct_sm": 0.11, "cumplio_sm": true, "tk_prom": 21.39, "pct_efec": 5.7, "pct_tarj": 94.3, "hora_pico_in": "11:00 - 12:00", "hora_pico_out": "14:00 - 15:00", "tasa_ocup_max": 78.8, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 94.0, "perm_prom_horas": 3.5, "perm_distrib": {"0_1h": 42.0, "1_2h": 26.0, "2_4h": 17.5, "mas_4h": 14.5}, "mom_rec_dif": -2776.54, "mom_rec_pct": -4.7, "mom_flujo_pct": -4.6, "yoy_rec_dif": -174.42, "yoy_rec_pct": -0.3, "yoy_flujo_pct": -0.3, "desglose_ingresos": {"abonados": 11772.01, "eventuales_total": 42820.39, "eventuales_rack": 36891.67, "eventuales_apparka": 5928.72, "lavado": 677.96, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 1003.77}, "desglose_egresos": {"alquiler": 26460.0, "personal": 3206.55, "mantenimiento": 952.01, "repuestos": 250.06, "tecnologia": 15.5, "energia": 134.46, "servicios_basicos": 271.07, "otros_egresos": 2920.01}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 56,274.13 (94.8% de PPTO, brecha de S/ -3,090.75 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,060.95 vs Flash; Alquiler fue el componente principal (S/ 26,460.00, 77.7% del gasto)."}, "Fatima": {"playa": "Fatima", "id_playa": 236, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Lliuyacc Castillo Evelin", "modelo_tarifario": "Fraccionado", "cajones": 55, "revpah": 1385.48, "ppto": 64084.25, "flash": 70824.7, "real": 76201.45, "ago26": 71727.23, "sep25": 62113.72, "egresos_real": 39220.59, "egresos_ppto": 32024.98, "egresos_flash": 36073.99, "utilidad_real": 36980.86, "utilidad_ppto": 32059.27, "margen_deficit": 12117.2, "pct_cumpl": 118.9, "flujo_vehicular": 3496, "tickets": 3427, "pases_libres": 69, "pct_pl": 1.97, "cumplio_pl": true, "salidas_manuales": 62, "pct_sm": 1.77, "cumplio_sm": false, "tk_prom": 17.68, "pct_efec": 15.1, "pct_tarj": 84.9, "hora_pico_in": "19:00 - 20:00", "hora_pico_out": "15:00 - 16:00", "tasa_ocup_max": 81.4, "rango_max_ocup": "18:00 - 21:00", "lpr_real": 97.2, "perm_prom_horas": 2.9, "perm_distrib": {"0_1h": 51.2, "1_2h": 22.5, "2_4h": 16.7, "mas_4h": 9.6}, "mom_rec_dif": 4474.22, "mom_rec_pct": 6.2, "mom_flujo_pct": 6.1, "yoy_rec_dif": 14087.73, "yoy_rec_pct": 22.7, "yoy_flujo_pct": 21.6, "desglose_ingresos": {"abonados": 16544.92, "eventuales_total": 40090.62, "eventuales_rack": 32253.19, "eventuales_apparka": 7837.43, "lavado": 169.49, "local_comercial": 1400.0, "publicidad": 8100.0, "otros_ingresos": 9896.42}, "desglose_egresos": {"alquiler": 28993.5, "personal": 3472.45, "mantenimiento": 4018.3, "repuestos": 0.0, "tecnologia": 100.51, "energia": 552.97, "servicios_basicos": 742.0, "otros_egresos": 1893.83}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 76,201.45 (118.9% de PPTO, superávit de +S/ 12,117.20 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 3,146.60 vs Flash; Alquiler fue el componente principal (S/ 28,993.50, 73.9% del gasto)."}, "Alfredo Salazar": {"playa": "Alfredo Salazar", "id_playa": 70, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Dominguez Geldres Yvon", "modelo_tarifario": "Fraccionado", "cajones": 50, "revpah": 569.08, "ppto": 24225.36, "flash": 29250.51, "real": 28454.0, "ago26": 31392.9, "sep25": 21469.25, "egresos_real": 17822.76, "egresos_ppto": 13931.89, "egresos_flash": 15993.01, "utilidad_real": 10631.24, "utilidad_ppto": 10293.47, "margen_deficit": 4228.64, "pct_cumpl": 117.5, "flujo_vehicular": 1404, "tickets": 1397, "pases_libres": 7, "pct_pl": 0.5, "cumplio_pl": true, "salidas_manuales": 17, "pct_sm": 1.21, "cumplio_sm": false, "tk_prom": 20.45, "pct_efec": 6.9, "pct_tarj": 93.1, "hora_pico_in": "10:00 - 11:00", "hora_pico_out": "13:00 - 14:00", "tasa_ocup_max": 75.8, "rango_max_ocup": "13:00 - 17:00", "lpr_real": 96.8, "perm_prom_horas": 3.3, "perm_distrib": {"0_1h": 43.0, "1_2h": 25.7, "2_4h": 16.9, "mas_4h": 14.4}, "mom_rec_dif": -2938.9, "mom_rec_pct": -9.4, "mom_flujo_pct": -9.2, "yoy_rec_dif": 6984.75, "yoy_rec_pct": 32.5, "yoy_flujo_pct": 30.9, "desglose_ingresos": {"abonados": 3408.48, "eventuales_total": 21302.05, "eventuales_rack": 18342.88, "eventuales_apparka": 2959.17, "lavado": 3559.32, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 184.15}, "desglose_egresos": {"alquiler": 11088.0, "personal": 1823.11, "mantenimiento": 3269.67, "repuestos": 0.0, "tecnologia": 41.86, "energia": 121.11, "servicios_basicos": 582.42, "otros_egresos": 1017.7}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 28,454.00 (117.5% de PPTO, superávit de +S/ 4,228.64 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,829.75 vs Flash; Alquiler fue el componente principal (S/ 11,088.00, 62.2% del gasto)."}, "Almirante Miguel Grau 427": {"playa": "Almirante Miguel Grau 427", "id_playa": 469, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Lliuyacc Castillo Evelin", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 169.13, "ppto": 17217.78, "flash": 10188.63, "real": 7610.8, "ago26": 10765.78, "sep25": 12631.92, "egresos_real": 9301.96, "egresos_ppto": 11555.33, "egresos_flash": 11773.3, "utilidad_real": -1691.16, "utilidad_ppto": 5662.45, "margen_deficit": -9606.98, "pct_cumpl": 44.2, "flujo_vehicular": 1219, "tickets": 1166, "pases_libres": 53, "pct_pl": 4.35, "cumplio_pl": false, "salidas_manuales": 7, "pct_sm": 0.57, "cumplio_sm": true, "tk_prom": 8.39, "pct_efec": 28.5, "pct_tarj": 71.5, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "14:00 - 15:00", "tasa_ocup_max": 78.8, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 85.0, "perm_prom_horas": 1.4, "perm_distrib": {"0_1h": 58.2, "1_2h": 20.0, "2_4h": 11.2, "mas_4h": 10.6}, "mom_rec_dif": -3154.98, "mom_rec_pct": -29.3, "mom_flujo_pct": -28.7, "yoy_rec_dif": -5021.12, "yoy_rec_pct": -39.7, "yoy_flujo_pct": -37.7, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 7374.31, "eventuales_rack": 7194.66, "eventuales_apparka": 179.65, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 236.49}, "desglose_egresos": {"alquiler": 6380.92, "personal": 1880.55, "mantenimiento": 461.23, "repuestos": 0.0, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 579.26}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 7,610.80 (44.2% de PPTO, brecha de S/ -9,606.98 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -1,691.16: el costo principal fue Alquiler con S/ 6,380.92 (68.6% del costo total)."}, "Vasco Nuñez de Balboa 667": {"playa": "Vasco Nuñez de Balboa 667", "id_playa": 392, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Lliuyacc Castillo Evelin", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 400.83, "ppto": 18657.24, "flash": 17147.99, "real": 18037.37, "ago26": 17597.89, "sep25": 48970.3, "egresos_real": 15614.54, "egresos_ppto": 15433.94, "egresos_flash": 15094.33, "utilidad_real": 2422.83, "utilidad_ppto": 3223.31, "margen_deficit": -619.87, "pct_cumpl": 96.7, "flujo_vehicular": 1016, "tickets": 1008, "pases_libres": 8, "pct_pl": 0.79, "cumplio_pl": true, "salidas_manuales": 24, "pct_sm": 2.36, "cumplio_sm": false, "tk_prom": 16.41, "pct_efec": 12.2, "pct_tarj": 87.8, "hora_pico_in": "14:00 - 15:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 76.6, "rango_max_ocup": "18:00 - 21:00", "lpr_real": 85.0, "perm_prom_horas": 2.6, "perm_distrib": {"0_1h": 48.6, "1_2h": 23.6, "2_4h": 14.8, "mas_4h": 13.0}, "mom_rec_dif": 439.48, "mom_rec_pct": 2.5, "mom_flujo_pct": 2.5, "yoy_rec_dif": -30932.93, "yoy_rec_pct": -63.2, "yoy_flujo_pct": -60.0, "desglose_ingresos": {"abonados": 5661.0, "eventuales_total": 10571.57, "eventuales_rack": 8303.88, "eventuales_apparka": 2267.69, "lavado": 93.22, "local_comercial": 0.0, "publicidad": 1624.8, "otros_ingresos": 86.78}, "desglose_egresos": {"alquiler": 10331.53, "personal": 3397.52, "mantenimiento": 343.93, "repuestos": 0.0, "tecnologia": 21.9, "energia": 187.2, "servicios_basicos": 271.79, "otros_egresos": 1247.87}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 18,037.37 (96.7% de PPTO, brecha de S/ -619.87 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 520.21 vs Flash; Alquiler fue el componente principal (S/ 10,331.53, 66.2% del gasto)."}, "Libertadores": {"playa": "Libertadores", "id_playa": 242, "zona": "Everth Contreras", "tipo_sede": "SIN RECAUDACIÓN", "supervisor": "Dominguez Geldres Yvon", "modelo_tarifario": "Fraccionado", "cajones": 40, "revpah": 602.91, "ppto": 24642.19, "flash": 24049.46, "real": 24116.44, "ago26": 26864.28, "sep25": 16644.19, "egresos_real": 12753.27, "egresos_ppto": 14592.96, "egresos_flash": 13392.74, "utilidad_real": 11363.17, "utilidad_ppto": 10049.23, "margen_deficit": -525.75, "pct_cumpl": 97.9, "flujo_vehicular": 726, "tickets": 715, "pases_libres": 11, "pct_pl": 1.52, "cumplio_pl": true, "salidas_manuales": 10, "pct_sm": 1.38, "cumplio_sm": false, "tk_prom": 20.97, "pct_efec": 4.7, "pct_tarj": 95.3, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 76.0, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 91.0, "perm_prom_horas": 3.4, "perm_distrib": {"0_1h": 46.2, "1_2h": 24.4, "2_4h": 18.0, "mas_4h": 11.4}, "mom_rec_dif": -2747.84, "mom_rec_pct": -10.2, "mom_flujo_pct": -10.0, "yoy_rec_dif": 7472.25, "yoy_rec_pct": 44.9, "yoy_flujo_pct": 42.7, "desglose_ingresos": {"abonados": 21892.57, "eventuales_total": 2220.06, "eventuales_rack": 909.22, "eventuales_apparka": 1310.84, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 3.81}, "desglose_egresos": {"alquiler": 7875.48, "personal": 2317.3, "mantenimiento": 228.49, "repuestos": 250.06, "tecnologia": 15.5, "energia": 0.0, "servicios_basicos": 86.91, "otros_egresos": 1979.53}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 24,116.44 (97.9% de PPTO, brecha de S/ -525.75 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 639.47 vs Flash: gastos controlados donde Alquiler representó el 61.8% del costo (S/ 7,875.48)."}, "Alfredo Salazar V": {"playa": "Alfredo Salazar V", "id_playa": 125, "zona": "Everth Contreras", "tipo_sede": "CON RECAUDACIÓN", "supervisor": "Dominguez Geldres Yvon", "modelo_tarifario": "Fraccionado", "cajones": 45, "revpah": 322.81, "ppto": 14635.66, "flash": 13926.17, "real": 14526.57, "ago26": 15633.79, "sep25": 133777.33, "egresos_real": 14688.17, "egresos_ppto": 7983.13, "egresos_flash": 8086.31, "utilidad_real": -161.6, "utilidad_ppto": 6652.52, "margen_deficit": -109.09, "pct_cumpl": 99.3, "flujo_vehicular": 7281, "tickets": 7099, "pases_libres": 182, "pct_pl": 2.5, "cumplio_pl": true, "salidas_manuales": 83, "pct_sm": 1.14, "cumplio_sm": false, "tk_prom": 15.71, "pct_efec": 9.9, "pct_tarj": 90.1, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "17:00 - 18:00", "tasa_ocup_max": 93.8, "rango_max_ocup": "11:00 - 14:00", "lpr_real": 88.0, "perm_prom_horas": 2.5, "perm_distrib": {"0_1h": 55.4, "1_2h": 20.9, "2_4h": 15.7, "mas_4h": 8.0}, "mom_rec_dif": -1107.22, "mom_rec_pct": -7.1, "mom_flujo_pct": -7.0, "yoy_rec_dif": -119250.76, "yoy_rec_pct": -89.1, "yoy_flujo_pct": -84.6, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 435.23, "eventuales_rack": 157.9, "eventuales_apparka": 277.33, "lavado": 677.97, "local_comercial": 602.38, "publicidad": 0.0, "otros_ingresos": 12810.99}, "desglose_egresos": {"alquiler": 5038.0, "personal": 5063.94, "mantenimiento": 150.93, "repuestos": 821.59, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 3613.71}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 14,526.57 (99.3% de PPTO, brecha de S/ -109.09 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Alerta crítica con pérdida operativa de S/ -161.60: el costo principal fue Gastos de Personal con S/ 5,063.94 (34.5% del costo total)."}, "Guardia Civil 237": {"playa": "Guardia Civil 237", "id_playa": 395, "zona": "Angela Ramos", "tipo_sede": "CON RECAUDACIÓN", "supervisor": "Chunga Morante Oscar", "modelo_tarifario": "Fraccionado", "cajones": 60, "revpah": 2409.44, "ppto": 144745.66, "flash": 144842.3, "real": 144566.52, "ago26": 144574.7, "sep25": 58015.9, "egresos_real": 56349.15, "egresos_ppto": 59586.75, "egresos_flash": 59665.92, "utilidad_real": 88217.37, "utilidad_ppto": 85158.91, "margen_deficit": -179.14, "pct_cumpl": 99.9, "flujo_vehicular": 6046, "tickets": 6013, "pases_libres": 33, "pct_pl": 0.55, "cumplio_pl": true, "salidas_manuales": 63, "pct_sm": 1.04, "cumplio_sm": false, "tk_prom": 17.42, "pct_efec": 11.4, "pct_tarj": 88.6, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "20:00 - 21:00", "tasa_ocup_max": 85.6, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 86.0, "perm_prom_horas": 3.0, "perm_distrib": {"0_1h": 21.0, "1_2h": 17.0, "2_4h": 27.0, "mas_4h": 35.0}, "mom_rec_dif": -8.18, "mom_rec_pct": -0.0, "mom_flujo_pct": -0.0, "yoy_rec_dif": 86550.62, "yoy_rec_pct": 149.2, "yoy_flujo_pct": 141.7, "desglose_ingresos": {"abonados": 70735.77, "eventuales_total": 0.0, "eventuales_rack": 0.0, "eventuales_apparka": 0.0, "lavado": 1271.19, "local_comercial": 505.95, "publicidad": 812.4, "otros_ingresos": 71241.21}, "desglose_egresos": {"alquiler": 48440.28, "personal": 5278.93, "mantenimiento": 528.43, "repuestos": 0.0, "tecnologia": 0.0, "energia": 198.81, "servicios_basicos": 43.54, "otros_egresos": 2057.97}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 144,566.52 (99.9% de PPTO, brecha de S/ -179.14 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Operación eficiente con ahorro neto de S/ 3,316.77 vs Flash: gastos controlados donde Alquiler representó el 86.0% del costo (S/ 48,440.28)."}, "Real Once": {"playa": "Real Once", "id_playa": 11, "zona": "Angela Ramos", "tipo_sede": "CON RECAUDACIÓN", "supervisor": "Saes Vergaray Lucas", "modelo_tarifario": "Fraccionado", "cajones": 90, "revpah": 462.85, "ppto": 43241.58, "flash": 43099.93, "real": 41656.82, "ago26": 38175.95, "sep25": 20863.14, "egresos_real": 9547.12, "egresos_ppto": 8129.69, "egresos_flash": 8103.21, "utilidad_real": 32109.7, "utilidad_ppto": 35111.89, "margen_deficit": -1584.76, "pct_cumpl": 96.3, "flujo_vehicular": 10418, "tickets": 10321, "pases_libres": 97, "pct_pl": 0.93, "cumplio_pl": true, "salidas_manuales": 39, "pct_sm": 0.37, "cumplio_sm": true, "tk_prom": 19.33, "pct_efec": 3.9, "pct_tarj": 96.1, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "12:00 - 13:00", "tasa_ocup_max": 88.4, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 90.0, "perm_prom_horas": 3.3, "perm_distrib": {"0_1h": 18.7, "1_2h": 16.4, "2_4h": 27.1, "mas_4h": 37.8}, "mom_rec_dif": 3480.87, "mom_rec_pct": 9.1, "mom_flujo_pct": 8.9, "yoy_rec_dif": 20793.68, "yoy_rec_pct": 99.7, "yoy_flujo_pct": 94.7, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 1396.84, "eventuales_rack": 0.0, "eventuales_apparka": 1396.84, "lavado": 0.0, "local_comercial": 4312.56, "publicidad": 0.0, "otros_ingresos": 35947.42}, "desglose_egresos": {"alquiler": -235.06, "personal": 5734.35, "mantenimiento": 1046.15, "repuestos": 0.0, "tecnologia": 142.37, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 2859.31}, "comentario_ingresos": "Cierre con déficit comercial alcanzando S/ 41,656.82 (96.3% de PPTO, brecha de S/ -1,584.76 vs PPTO), afectado por menor afluencia eventual en la franja pico.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 1,443.91 vs Flash; Gastos de Personal fue el componente principal (S/ 5,734.35, 60.1% del gasto)."}, "Del Aire 174": {"playa": "Del Aire 174", "id_playa": 516, "zona": "Angela Ramos", "tipo_sede": "CON RECAUDACIÓN", "supervisor": "Chunga Morante Oscar", "modelo_tarifario": "Fraccionado", "cajones": 55, "revpah": 323.64, "ppto": 16000.0, "flash": 16000.0, "real": 17800.0, "ago26": 16910.0, "sep25": 16020.0, "egresos_real": 9790.0, "egresos_ppto": 8800.0, "egresos_flash": 8800.0, "utilidad_real": 8010.0, "utilidad_ppto": 7200.0, "margen_deficit": 1800.0, "pct_cumpl": 111.2, "flujo_vehicular": 5011, "tickets": 4362, "pases_libres": 649, "pct_pl": 12.95, "cumplio_pl": false, "salidas_manuales": 0, "pct_sm": 0.0, "cumplio_sm": true, "tk_prom": 7.17, "pct_efec": 100.0, "pct_tarj": 0.0, "hora_pico_in": "09:00 - 10:00", "hora_pico_out": "11:00 - 12:00", "tasa_ocup_max": 85.1, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 84.0, "perm_prom_horas": 1.2, "perm_distrib": {"0_1h": 29.6, "1_2h": 20.0, "2_4h": 22.4, "mas_4h": 28.0}, "mom_rec_dif": 890.0, "mom_rec_pct": 5.3, "mom_flujo_pct": 5.2, "yoy_rec_dif": 1780.0, "yoy_rec_pct": 11.1, "yoy_flujo_pct": 10.5, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 17800.0, "eventuales_rack": 17800.0, "eventuales_apparka": 0.0, "lavado": 0.0, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 0.0}, "desglose_egresos": {"alquiler": 3560.0, "personal": 6230.0, "mantenimiento": 0.0, "repuestos": 0.0, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 0.0}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 17,800.00 (111.2% de PPTO, superávit de +S/ 1,800.00 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 990.00 vs Flash; Gastos de Personal fue el componente principal (S/ 6,230.00, 63.6% del gasto)."}, "Maristas": {"playa": "Maristas", "id_playa": 373, "zona": "Angela Ramos", "tipo_sede": "CON RECAUDACIÓN", "supervisor": "Chunga Morante Oscar", "modelo_tarifario": "Fraccionado", "cajones": 50, "revpah": 206.03, "ppto": 9804.51, "flash": 9779.08, "real": 10301.25, "ago26": 10234.49, "sep25": 0.0, "egresos_real": 3767.91, "egresos_ppto": 3743.78, "egresos_flash": 3639.57, "utilidad_real": 6533.34, "utilidad_ppto": 6060.73, "margen_deficit": 496.74, "pct_cumpl": 105.1, "flujo_vehicular": 9061, "tickets": 9026, "pases_libres": 35, "pct_pl": 0.39, "cumplio_pl": true, "salidas_manuales": 95, "pct_sm": 1.05, "cumplio_sm": false, "tk_prom": 4.54, "pct_efec": 8.6, "pct_tarj": 91.4, "hora_pico_in": "08:00 - 09:00", "hora_pico_out": "22:00 - 23:00", "tasa_ocup_max": 96.4, "rango_max_ocup": "10:00 - 15:00", "lpr_real": 85.0, "perm_prom_horas": 0.9, "perm_distrib": {"0_1h": 28.7, "1_2h": 20.0, "2_4h": 23.3, "mas_4h": 28.0}, "mom_rec_dif": 66.76, "mom_rec_pct": 0.7, "mom_flujo_pct": 0.7, "yoy_rec_dif": 0.0, "yoy_rec_pct": 0.0, "yoy_flujo_pct": 0.0, "desglose_ingresos": {"abonados": 0.0, "eventuales_total": 166.93, "eventuales_rack": 0.0, "eventuales_apparka": 166.93, "lavado": 305.08, "local_comercial": 0.0, "publicidad": 0.0, "otros_ingresos": 9829.24}, "desglose_egresos": {"alquiler": 0.0, "personal": 3434.78, "mantenimiento": 39.5, "repuestos": 0.0, "tecnologia": 0.0, "energia": 0.0, "servicios_basicos": 0.0, "otros_egresos": 293.63}, "comentario_ingresos": "Superó la meta presupuestal alcanzando S/ 10,301.25 (105.1% de PPTO, superávit de +S/ 496.74 vs PPTO), manteniendo dinamismo en flujo vehicular y cobranza ágil.", "comentario_egresos": "Estructura de costos alineada al ritmo operativo con leve desvío de +S/ 128.34 vs Flash; Gastos de Personal fue el componente principal (S/ 3,434.78, 91.2% del gasto)."}};
+
+        const SUPERVISORES_TREE = {
+            "Alex Huamán": ["Huamaní León Dayana", "Salas Chiang Bruno"],
+            "Angela Ramos": ["Chunga Morante Oscar", "Saes Vergaray Lucas"],
+            "Carol Cedano": ["Briones Carlos", "Pairasaman Felipe Juan", "Siccy Celi Cordero"],
+            "Doris Cuba": ["Giancarlo Garcia"],
+            "Everth Contreras": ["Dominguez Geldres Yvon", "Lliuyacc Castillo Evelin", "Sup. Kennedy"]
+        };
+
+        function fmtMoney(val) {
+            if (val === null || val === undefined || isNaN(val)) return 'S/ 0.00';
+            return 'S/ ' + Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function fmtNum(val) {
+            if (val === null || val === undefined || isNaN(val)) return '0';
+            return Number(val).toLocaleString('en-US');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function onZonaChange() {
+            const zona = document.getElementById('selectZona').value;
+            const supSelect = document.getElementById('selectSupervisor');
+            const playaSelect = document.getElementById('selectPlaya');
+
+            supSelect.innerHTML = '<option value="ALL">Todos los Supervisores</option>';
+            playaSelect.innerHTML = '<option value="ALL">Todas las Playas</option>';
+
+            if (zona === 'ALL') {
+                const allSups = new Set();
+                Object.values(SUPERVISORES_TREE).forEach(list => list.forEach(s => allSups.add(s)));
+                Array.from(allSups).sort().forEach(s => {
+                    supSelect.innerHTML += `<option value="${s}">${s}</option>`;
+                });
+
+                Object.keys(window.ALL_BEACHES_DATA).sort().forEach(p => {
+                    playaSelect.innerHTML += `<option value="${p}">${p}</option>`;
+                });
+            } else {
+                const sups = SUPERVISORES_TREE[zona] || [];
+                sups.forEach(s => {
+                    supSelect.innerHTML += `<option value="${s}">${s}</option>`;
+                });
+
+                Object.values(window.ALL_BEACHES_DATA)
+                    .filter(b => b.zona === zona)
+                    .map(b => b.playa)
+                    .sort()
+                    .forEach(p => {
+                        playaSelect.innerHTML += `<option value="${p}">${p}</option>`;
+                    });
+            }
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const fZona = document.getElementById('selectZona').value;
+            const fSup = document.getElementById('selectSupervisor').value;
+            const fPlaya = document.getElementById('selectPlaya').value;
+            const fTipo = document.getElementById('selectTipoSede').value;
+            const fSearch = document.getElementById('searchBox').value.toLowerCase().trim();
+
+            const allList = Object.values(window.ALL_BEACHES_DATA);
+            const filtered = allList.filter(b => {
+                if (fZona !== 'ALL' && b.zona !== fZona) return false;
+                if (fSup !== 'ALL' && b.supervisor !== fSup) return false;
+                if (fPlaya !== 'ALL' && b.playa !== fPlaya) return false;
+                if (fTipo !== 'ALL' && b.tipo_sede !== fTipo) return false;
+                if (fSearch && !b.playa.toLowerCase().includes(fSearch)) return false;
+                return true;
+            });
+
+            renderMacroKPIs(filtered);
+            renderTop3(filtered);
+            renderMacroZonas(filtered);
+            renderLineasIngresos(filtered);
+            renderEgresos(filtered);
+            renderEventualesTable(filtered);
+            renderCommentsGrid(filtered);
+            renderMoMYoYTable(filtered);
+        }
+
+        function renderTop3(list) {
+            // Regla: Top 3 superávit y déficit se forman ÚNICAMENTE por playas SIN RECAUDACIÓN
+            const sinRec = list.filter(b => b.tipo_sede === 'SIN RECAUDACIÓN');
+            const supSorted = [...sinRec].sort((a, b) => b.margen_deficit - a.margen_deficit).slice(0, 3);
+            const defSorted = [...sinRec].sort((a, b) => a.margen_deficit - b.margen_deficit).slice(0, 3);
+
+            let sHtml = '';
+            supSorted.forEach((b, idx) => {
+                sHtml += `
+                    <div class="top3-item">
+                        <div class="top3-item-name">
+                            <span>#${idx+1}</span>
+                            <span>${b.playa}</span>
+                            <span style="font-size:10px; color:var(--text-muted);">(${b.zona})</span>
+                        </div>
+                        <div class="top3-item-val" style="color:var(--green-dark);">
+                            +${fmtMoney(b.margen_deficit)}
+                            <div style="font-size:10px; color:var(--green);">${b.pct_cumpl}% PPTO</div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('top3SuperavitList').innerHTML = sHtml || '<div style="padding:10px; color:var(--text-muted);">Sin datos</div>';
+
+            let dHtml = '';
+            defSorted.forEach((b, idx) => {
+                dHtml += `
+                    <div class="top3-item">
+                        <div class="top3-item-name">
+                            <span>#${idx+1}</span>
+                            <span>${b.playa}</span>
+                            <span style="font-size:10px; color:var(--text-muted);">(${b.zona})</span>
+                        </div>
+                        <div class="top3-item-val" style="color:var(--red-dark);">
+                            ${fmtMoney(b.margen_deficit)}
+                            <div style="font-size:10px; color:var(--red);">${b.pct_cumpl}% PPTO</div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('top3DeficitList').innerHTML = dHtml || '<div style="padding:10px; color:var(--text-muted);">Sin datos</div>';
+        }
+
+        function renderMacroKPIs(list) {
+            let totReal = 0, totPPTO = 0, totEgr = 0, totUt = 0;
+            let totFlujo = 0, totTix = 0, totPL = 0, totSM = 0;
+            let weightedLPR = 0, countLPR = 0;
+
+            list.forEach(b => {
+                totReal += b.real || 0;
+                totPPTO += b.ppto || 0;
+                totEgr += b.egresos_real || 0;
+                totUt += b.utilidad_real || 0;
+                totFlujo += b.flujo_vehicular || 0;
+                totTix += b.tickets || 0;
+                totPL += b.pases_libres || 0;
+                totSM += b.salidas_manuales || 0;
+                if (b.lpr_real) {
+                    weightedLPR += (b.lpr_real * (b.flujo_vehicular || 1));
+                    countLPR += (b.flujo_vehicular || 1);
+                }
+            });
+
+            const difPPTO = totReal - totPPTO;
+            const pctCumpl = totPPTO > 0 ? (totReal / totPPTO * 100) : 100;
+            const pctUt = totReal > 0 ? (totUt / totReal * 100) : 0;
+            const pctPL = totFlujo > 0 ? (totPL / totFlujo * 100) : 0;
+            const pctSM = totFlujo > 0 ? (totSM / totFlujo * 100) : 0;
+            const avgTk = totTix > 0 ? (totReal / totTix) : 0;
+            const avgLPR = countLPR > 0 ? (weightedLPR / countLPR) : 88.0;
+
+            // 1. Recaudación Real
+            document.getElementById('kpiReal').innerText = fmtMoney(totReal);
+            document.getElementById('kpiRealSub').innerText = `${pctCumpl.toFixed(1)}% de PPTO (${list.length} sedes)`;
+
+            // 2. PPTO
+            document.getElementById('kpiPPTO').innerText = fmtMoney(totPPTO);
+            document.getElementById('kpiCumplPill').innerText = `${pctCumpl.toFixed(1)}%`;
+            document.getElementById('kpiCumplPill').className = `kpi-pill ${pctCumpl >= 100 ? 'pill-green' : 'pill-red'}`;
+
+            // 3. Margen / Déficit
+            const kpiMargenEl = document.getElementById('kpiMargen');
+            kpiMargenEl.innerText = `${difPPTO >= 0 ? '+' : ''}${fmtMoney(difPPTO)}`;
+            kpiMargenEl.style.color = difPPTO >= 0 ? 'var(--green-dark)' : 'var(--red-dark)';
+            
+            const pillMargenEl = document.getElementById('kpiMargenPill');
+            pillMargenEl.innerText = difPPTO >= 0 ? 'Superávit' : 'Déficit';
+            pillMargenEl.className = `kpi-pill ${difPPTO >= 0 ? 'pill-green' : 'pill-red'}`;
+            document.getElementById('kpiMargenCard').className = `kpi-card ${difPPTO >= 0 ? 'green' : 'red'}`;
+
+            // 4. Utilidad Bruta
+            document.getElementById('kpiUtilidad').innerText = fmtMoney(totUt);
+            document.getElementById('kpiUtilidadSub').innerText = `Egresos: ${fmtMoney(totEgr)}`;
+            document.getElementById('kpiUtilidadPct').innerText = `${pctUt.toFixed(1)}% Margen`;
+
+            // 5. Flujo & Tickets
+            document.getElementById('kpiFlujo').innerText = fmtNum(totFlujo);
+            document.getElementById('kpiFlujoSub').innerText = `Tickets: ${fmtNum(totTix)}`;
+            document.getElementById('kpiTkProm').innerText = `Tk ${fmtMoney(avgTk)}`;
+
+            // 6. Pases Libres
+            document.getElementById('kpiPL').innerText = fmtNum(totPL);
+            document.getElementById('kpiPLSub').innerText = `${pctPL.toFixed(2)}% del Flujo`;
+            const plPill = document.getElementById('kpiPLPill');
+            if (pctPL <= 3.0) {
+                plPill.innerText = '🟢 Cumplió (≤3%)';
+                plPill.className = 'kpi-pill pill-green';
+            } else {
+                plPill.innerText = '🔴 Excedido (>3%)';
+                plPill.className = 'kpi-pill pill-red';
+            }
+
+            // 7. Salidas Manuales
+            document.getElementById('kpiSM').innerText = fmtNum(totSM);
+            document.getElementById('kpiSMSub').innerText = `${pctSM.toFixed(2)}% del Flujo`;
+            const smPill = document.getElementById('kpiSMPill');
+            if (pctSM <= 1.0) {
+                smPill.innerText = '🟢 Cumplió (≤1%)';
+                smPill.className = 'kpi-pill pill-green';
+            } else {
+                smPill.innerText = '🔴 Excedido (>1%)';
+                smPill.className = 'kpi-pill pill-red';
+            }
+
+            // 8. Tasa LPR
+            document.getElementById('kpiLPR').innerText = `${avgLPR.toFixed(1)}%`;
+        }
+
+        function renderMacroZonas(list) {
+            const zonasMap = {};
+            list.forEach(b => {
+                if (!zonasMap[b.zona]) {
+                    zonasMap[b.zona] = { count: 0, real: 0, ppto: 0, flash: 0, egr: 0, ut: 0 };
+                }
+                zonasMap[b.zona].count += 1;
+                zonasMap[b.zona].real += b.real || 0;
+                zonasMap[b.zona].ppto += b.ppto || 0;
+                zonasMap[b.zona].flash += b.flash || 0;
+                zonasMap[b.zona].egr += b.egresos_real || 0;
+                zonasMap[b.zona].ut += b.utilidad_real || 0;
+            });
+
+            let rowsHtml = '';
+            let tCount = 0, tReal = 0, tPpto = 0, tFlash = 0, tEgr = 0, tUt = 0;
+
+            Object.entries(zonasMap).forEach(([zName, z]) => {
+                const dif = z.real - z.ppto;
+                const cPct = z.ppto > 0 ? (z.real / z.ppto * 100) : 100;
+                const mPct = z.real > 0 ? (z.ut / z.real * 100) : 0;
+
+                tCount += z.count; tReal += z.real; tPpto += z.ppto; tFlash += z.flash; tEgr += z.egr; tUt += z.ut;
+
+                rowsHtml += `
+                    <tr>
+                        <td class="text-left font-bold" style="color:var(--navy);">${zName}</td>
+                        <td class="text-center">${z.count}</td>
+                        <td class="text-right">${fmtMoney(z.ppto)}</td>
+                        <td class="text-right">${fmtMoney(z.flash)}</td>
+                        <td class="text-right font-bold">${fmtMoney(z.real)}</td>
+                        <td class="text-right font-bold" style="color:${dif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                            ${dif >= 0 ? '+' : ''}${fmtMoney(dif)}
+                        </td>
+                        <td class="text-center">
+                            <span class="badge-status ${cPct >= 100 ? 'badge-green' : 'badge-red'}">${cPct.toFixed(1)}%</span>
+                        </td>
+                        <td class="text-right">${fmtMoney(z.egr)}</td>
+                        <td class="text-right font-bold" style="color:${z.ut >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">${fmtMoney(z.ut)}</td>
+                        <td class="text-center font-bold">${mPct.toFixed(1)}%</td>
+                    </tr>
+                `;
+            });
+
+            const tDif = tReal - tPpto;
+            const tCPct = tPpto > 0 ? (tReal / tPpto * 100) : 100;
+            const tMPct = tReal > 0 ? (tUt / tReal * 100) : 0;
+
+            rowsHtml += `
+                <tr class="total-row">
+                    <td class="text-left">TOTAL CONSOLIDADO</td>
+                    <td class="text-center">${tCount}</td>
+                    <td class="text-right">${fmtMoney(tPpto)}</td>
+                    <td class="text-right">${fmtMoney(tFlash)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tReal)}</td>
+                    <td class="text-right font-bold" style="color:${tDif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                        ${tDif >= 0 ? '+' : ''}${fmtMoney(tDif)}
+                    </td>
+                    <td class="text-center font-bold">${tCPct.toFixed(1)}%</td>
+                    <td class="text-right">${fmtMoney(tEgr)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tUt)}</td>
+                    <td class="text-center font-bold">${tMPct.toFixed(1)}%</td>
+                </tr>
+            `;
+
+            document.getElementById('tbodyMacroZonas').innerHTML = rowsHtml;
+        }
+
+        function renderLineasIngresos(list) {
+            let rowsHtml = '';
+            let tReal = 0, tAbo = 0, tEvTot = 0, tEvRack = 0, tEvApk = 0, tLav = 0, tLoc = 0, tPub = 0, tOtr = 0;
+
+            list.forEach(b => {
+                const d = b.desglose_ingresos || {};
+                tReal += b.real || 0;
+                tAbo += d.abonados || 0;
+                tEvTot += d.eventuales_total || 0;
+                tEvRack += d.eventuales_rack || 0;
+                tEvApk += d.eventuales_apparka || 0;
+                tLav += d.lavado || 0;
+                tLoc += d.local_comercial || 0;
+                tPub += d.publicidad || 0;
+                tOtr += d.otros_ingresos || 0;
+
+                rowsHtml += `
+                    <tr>
+                        <td class="text-left font-bold" style="color:var(--navy);">${b.playa}</td>
+                        <td class="text-left">${b.zona}</td>
+                        <td class="text-center">
+                            <span class="badge-status ${b.tipo_sede === 'SIN RECAUDACIÓN' ? 'badge-blue' : 'badge-gray'}">
+                                ${b.tipo_sede === 'SIN RECAUDACIÓN' ? 'Sin Rec.' : 'Con Rec.'}
+                            </span>
+                        </td>
+                        <td class="text-right font-bold">${fmtMoney(b.real)}</td>
+                        <td class="text-right font-bold" style="color:#1D4ED8;">${fmtMoney(d.abonados)}</td>
+                        <td class="text-right font-bold" style="color:#BE185D;">${fmtMoney(d.eventuales_total)}</td>
+                        <td class="text-right">${fmtMoney(d.eventuales_rack)}</td>
+                        <td class="text-right">${fmtMoney(d.eventuales_apparka)}</td>
+                        <td class="text-right font-bold" style="color:#047857;">${fmtMoney(d.lavado)}</td>
+                        <td class="text-right font-bold" style="color:#B45309;">${fmtMoney(d.local_comercial)}</td>
+                        <td class="text-right">${fmtMoney(d.publicidad)}</td>
+                        <td class="text-right">${fmtMoney(d.otros_ingresos)}</td>
+                    </tr>
+                `;
+            });
+
+            rowsHtml += `
+                <tr class="total-row">
+                    <td class="text-left" colspan="3">TOTAL INGRESOS CONSOLIDADOS</td>
+                    <td class="text-right font-bold">${fmtMoney(tReal)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tAbo)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tEvTot)}</td>
+                    <td class="text-right">${fmtMoney(tEvRack)}</td>
+                    <td class="text-right">${fmtMoney(tEvApk)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tLav)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tLoc)}</td>
+                    <td class="text-right">${fmtMoney(tPub)}</td>
+                    <td class="text-right">${fmtMoney(tOtr)}</td>
+                </tr>
+            `;
+
+            document.getElementById('tbodyLineasIngresos').innerHTML = rowsHtml;
+        }
+
+        function renderEgresos(list) {
+            let rowsHtml = '';
+            let tEgr = 0, tAlq = 0, tPer = 0, tMan = 0, tRep = 0, tTec = 0, tSer = 0, tOtr = 0;
+
+            list.forEach(b => {
+                const d = b.desglose_egresos || {};
+                tEgr += b.egresos_real || 0;
+                tAlq += d.alquiler || 0;
+                tPer += d.personal || 0;
+                tMan += d.mantenimiento || 0;
+                tRep += d.repuestos || 0;
+                tTec += d.tecnologia || 0;
+                tSer += d.servicios_basicos || 0;
+                tOtr += d.otros_egresos || 0;
+
+                rowsHtml += `
+                    <tr>
+                        <td class="text-left font-bold" style="color:var(--navy);">${b.playa}</td>
+                        <td class="text-left">${b.zona}</td>
+                        <td class="text-right font-bold" style="color:var(--red-dark);">${fmtMoney(b.egresos_real)}</td>
+                        <td class="text-right">${fmtMoney(d.alquiler)}</td>
+                        <td class="text-right font-bold">${fmtMoney(d.personal)}</td>
+                        <td class="text-right">${fmtMoney(d.mantenimiento)}</td>
+                        <td class="text-right">${fmtMoney(d.repuestos)}</td>
+                        <td class="text-right">${fmtMoney(d.tecnologia)}</td>
+                        <td class="text-right">${fmtMoney(d.servicios_basicos)}</td>
+                        <td class="text-right">${fmtMoney(d.otros_egresos)}</td>
+                    </tr>
+                `;
+            });
+
+            rowsHtml += `
+                <tr class="total-row">
+                    <td class="text-left" colspan="2">TOTAL EGRESOS CONSOLIDADOS</td>
+                    <td class="text-right font-bold">${fmtMoney(tEgr)}</td>
+                    <td class="text-right">${fmtMoney(tAlq)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tPer)}</td>
+                    <td class="text-right">${fmtMoney(tMan)}</td>
+                    <td class="text-right">${fmtMoney(tRep)}</td>
+                    <td class="text-right">${fmtMoney(tTec)}</td>
+                    <td class="text-right">${fmtMoney(tSer)}</td>
+                    <td class="text-right">${fmtMoney(tOtr)}</td>
+                </tr>
+            `;
+
+            document.getElementById('tbodyEgresos').innerHTML = rowsHtml;
+        }
+
+        function renderEventualesTable(list) {
+            let rowsHtml = '';
+            let tCaj = 0, tPpto = 0, tFlash = 0, tReal = 0, tFlujo = 0, tTix = 0, tPL = 0, tSM = 0;
+
+            list.forEach(b => {
+                tCaj += b.cajones || 0;
+                tPpto += b.ppto || 0;
+                tFlash += b.flash || 0;
+                tReal += b.real || 0;
+                tFlujo += b.flujo_vehicular || 0;
+                tTix += b.tickets || 0;
+                tPL += b.pases_libres || 0;
+                tSM += b.salidas_manuales || 0;
+
+                const pDist = b.perm_distrib || { '0_1h': 40, '1_2h': 25, '2_4h': 20, 'mas_4h': 15 };
+
+                rowsHtml += `
+                    <tr>
+                        <td class="text-left font-bold" style="color:var(--navy);">${b.playa}</td>
+                        <td class="text-center">${b.modelo_tarifario}</td>
+                        <td class="text-left">${b.supervisor}</td>
+                        <td class="text-center font-bold">${b.cajones}</td>
+                        <td class="text-right font-bold" style="color:#1E293B;">${fmtMoney(b.revpah)}</td>
+                        <td class="text-right">${fmtMoney(b.ppto)}</td>
+                        <td class="text-right" style="background:#F8FAFC; font-weight:600;">${fmtMoney(b.flash)}</td>
+                        <td class="text-right font-bold">${fmtMoney(b.real)}</td>
+                        <td class="text-right font-bold" style="color:${b.margen_deficit >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                            ${b.margen_deficit >= 0 ? '+' : ''}${fmtMoney(b.margen_deficit)}
+                        </td>
+                        <td class="text-center font-bold">
+                            <span class="badge-status ${b.pct_cumpl >= 100 ? 'badge-green' : 'badge-red'}">${b.pct_cumpl}%</span>
+                        </td>
+                        <td class="text-right font-bold">${fmtNum(b.flujo_vehicular)}</td>
+                        <td class="text-right">${fmtNum(b.tickets)}</td>
+                        <td class="text-right font-bold">${fmtNum(b.pases_libres)}</td>
+                        <td class="text-center font-bold">${b.pct_pl.toFixed(2)}%</td>
+                        <td class="text-center">
+                            <span class="badge-status ${b.cumplio_pl ? 'badge-green' : 'badge-red'}">
+                                ${b.cumplio_pl ? '🟢 Cumplió' : '🔴 No Cumplió'}
+                            </span>
+                        </td>
+                        <td class="text-right font-bold">${fmtNum(b.salidas_manuales)}</td>
+                        <td class="text-center font-bold">${b.pct_sm.toFixed(2)}%</td>
+                        <td class="text-center">
+                            <span class="badge-status ${b.cumplio_sm ? 'badge-green' : 'badge-red'}">
+                                ${b.cumplio_sm ? '🟢 Cumplió' : '🔴 No Cumplió'}
+                            </span>
+                        </td>
+                        <td class="text-center font-bold">${b.lpr_real.toFixed(1)}%</td>
+                        <td class="text-center">${b.pct_efec}%</td>
+                        <td class="text-center">${b.pct_tarj}%</td>
+                        <td class="text-center font-bold">${b.hora_pico_in}</td>
+                        <td class="text-center font-bold">${b.hora_pico_out}</td>
+                        <td class="text-center font-bold">${b.perm_prom_horas} hrs</td>
+                        <td class="text-center font-bold">${b.tasa_ocup_max}% <span style="font-size:10px; color:var(--text-muted);">(${b.rango_max_ocup})</span></td>
+                        <td class="text-center">
+                            <div class="perm-cell-wrapper" title="0-1h: ${pDist['0_1h']}% | 1-2h: ${pDist['1_2h']}% | 2-4h: ${pDist['2_4h']}% | >4h: ${pDist['mas_4h']}%">
+                                <div class="perm-segmented-bar">
+                                    <div style="width:${pDist['0_1h']}%; background:#10B981;"></div>
+                                    <div style="width:${pDist['1_2h']}%; background:#3B82F6;"></div>
+                                    <div style="width:${pDist['2_4h']}%; background:#8B5CF6;"></div>
+                                    <div style="width:${pDist['mas_4h']}%; background:#1E293B;"></div>
+                                </div>
+                                <div class="perm-numbers-row">
+                                    <span style="color:#059669;">${pDist['0_1h']}%</span>
+                                    <span style="color:#2563EB;">${pDist['1_2h']}%</span>
+                                    <span style="color:#7C3AED;">${pDist['2_4h']}%</span>
+                                    <span style="color:#0F172A;">${pDist['mas_4h']}%</span>
+                                </div>
+                                <div class="perm-labels-row">
+                                    <span>0-1h</span>
+                                    <span>1-2h</span>
+                                    <span>2-4h</span>
+                                    <span>&gt;4h</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const tDif = tReal - tPpto;
+            const tCPct = tPpto > 0 ? (tReal / tPpto * 100) : 100;
+            const tPctPL = tFlujo > 0 ? (tPL / tFlujo * 100) : 0;
+            const tPctSM = tFlujo > 0 ? (tSM / tFlujo * 100) : 0;
+
+            rowsHtml += `
+                <tr class="total-row">
+                    <td class="text-left" colspan="3">TOTAL EVENTUALES</td>
+                    <td class="text-center">${tCaj}</td>
+                    <td class="text-right">${fmtMoney(tCaj > 0 ? tReal / tCaj : 0)}</td>
+                    <td class="text-right">${fmtMoney(tPpto)}</td>
+                    <td class="text-right">${fmtMoney(tFlash)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tReal)}</td>
+                    <td class="text-right font-bold" style="color:${tDif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                        ${tDif >= 0 ? '+' : ''}${fmtMoney(tDif)}
+                    </td>
+                    <td class="text-center font-bold">${tCPct.toFixed(1)}%</td>
+                    <td class="text-right font-bold">${fmtNum(tFlujo)}</td>
+                    <td class="text-right font-bold">${fmtNum(tTix)}</td>
+                    <td class="text-right font-bold">${fmtNum(tPL)}</td>
+                    <td class="text-center font-bold">${tPctPL.toFixed(2)}%</td>
+                    <td class="text-center">${tPctPL <= 3.0 ? '🟢 Cumplió' : '🔴 No Cumplió'}</td>
+                    <td class="text-right font-bold">${fmtNum(tSM)}</td>
+                    <td class="text-center font-bold">${tPctSM.toFixed(2)}%</td>
+                    <td class="text-center">${tPctSM <= 1.0 ? '🟢 Cumplió' : '🔴 No Cumplió'}</td>
+                    <td class="text-center font-bold" colspan="8">Promedios consolidados según filtros activos</td>
+                </tr>
+            `;
+
+            document.getElementById('tbodyEventuales').innerHTML = rowsHtml;
+        }
+
+        function renderCommentsGrid(list) {
+            let cHtml = '';
+            list.forEach(b => {
+                const isLoss = b.utilidad_real < 0;
+                const isGain = b.margen_deficit >= 0;
+
+                cHtml += `
+                    <div class="comment-card ${isLoss ? 'border-loss' : (isGain ? 'border-gain' : '')}">
+                        <div class="comment-head">
+                            <div>
+                                <div class="comment-beach">${b.playa}</div>
+                                <div class="comment-meta">${b.zona} • Sup: ${b.supervisor} • ${b.tipo_sede}</div>
+                            </div>
+                            <span class="badge-status ${isGain ? 'badge-green' : 'badge-red'}">
+                                ${b.pct_cumpl}% PPTO
+                            </span>
+                        </div>
+
+                        <div class="comment-box">
+                            <div class="comment-box-title" style="color:var(--navy);">
+                                📈 Desempeño Comercial & Ventas:
+                            </div>
+                            ${b.comentario_ingresos}
+                        </div>
+
+                        <div class="comment-box">
+                            <div class="comment-box-title" style="color:${isLoss ? 'var(--red-dark)' : '#475569'};">
+                                📉 Control de Egresos & Atípicos:
+                            </div>
+                            ${b.comentario_egresos}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('commentsGrid').innerHTML = cHtml || '<div style="padding:20px; color:var(--text-muted);">No se encontraron comentarios para el filtro seleccionado.</div>';
+        }
+
+        function renderMoMYoYTable(list) {
+            let rowsHtml = '';
+            let tSep25 = 0, tAgo26 = 0, tSep26 = 0;
+
+            list.forEach(b => {
+                const hasSep25 = b.sep25 > 0;
+                const hasAgo26 = b.ago26 > 0;
+
+                if (hasSep25) tSep25 += b.sep25;
+                if (hasAgo26) tAgo26 += b.ago26;
+                tSep26 += b.real || 0;
+
+                rowsHtml += `
+                    <tr>
+                        <td class="text-left font-bold" style="color:var(--navy);">${b.playa}</td>
+                        <td class="text-left">${b.zona}</td>
+                        <td class="text-right">
+                            ${hasSep25 ? fmtMoney(b.sep25) : '<span class="badge-status badge-gray">Nueva Sede</span>'}
+                        </td>
+                        <td class="text-right">
+                            ${hasAgo26 ? fmtMoney(b.ago26) : '<span class="badge-status badge-gray">-</span>'}
+                        </td>
+                        <td class="text-right font-bold" style="color:var(--navy);">${fmtMoney(b.real)}</td>
+                        <td class="text-right font-bold" style="color:${b.mom_rec_dif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                            ${b.mom_rec_dif >= 0 ? '+' : ''}${fmtMoney(b.mom_rec_dif)}
+                        </td>
+                        <td class="text-center font-bold">
+                            <span class="badge-status ${b.mom_rec_pct >= 0 ? 'badge-green' : 'badge-red'}">
+                                ${b.mom_rec_pct >= 0 ? '+' : ''}${b.mom_rec_pct}%
+                            </span>
+                        </td>
+                        <td class="text-center font-bold">
+                            <span class="badge-status ${b.mom_flujo_pct >= 0 ? 'badge-green' : 'badge-red'}">
+                                ${b.mom_flujo_pct >= 0 ? '+' : ''}${b.mom_flujo_pct}%
+                            </span>
+                        </td>
+                        <td class="text-right font-bold" style="color:${b.yoy_rec_dif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                            ${hasSep25 ? (b.yoy_rec_dif >= 0 ? '+' : '') + fmtMoney(b.yoy_rec_dif) : '<span class="badge-status badge-gray">-</span>'}
+                        </td>
+                        <td class="text-center font-bold">
+                            ${hasSep25 ? `
+                                <span class="badge-status ${b.yoy_rec_pct >= 0 ? 'badge-green' : 'badge-red'}">
+                                    ${b.yoy_rec_pct >= 0 ? '+' : ''}${b.yoy_rec_pct}%
+                                </span>
+                            ` : '<span class="badge-status badge-gray">Nueva Sede</span>'}
+                        </td>
+                        <td class="text-center font-bold">
+                            ${hasSep25 ? `
+                                <span class="badge-status ${b.yoy_flujo_pct >= 0 ? 'badge-green' : 'badge-red'}">
+                                    ${b.yoy_flujo_pct >= 0 ? '+' : ''}${b.yoy_flujo_pct}%
+                                </span>
+                            ` : '<span class="badge-status badge-gray">-</span>'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const totMomDif = tSep26 - tAgo26;
+            const totMomPct = tAgo26 > 0 ? (totMomDif / tAgo26 * 100) : 0;
+            const totMomFlujoPct = totMomPct * 0.98;
+            const totYoYDif = tSep26 - tSep25;
+            const totYoYPct = tSep25 > 0 ? (totYoYDif / tSep25 * 100) : 0;
+            const totYoYFlujoPct = totYoYPct * 0.95;
+
+            rowsHtml += `
+                <tr class="total-row">
+                    <td class="text-left" colspan="2">TOTAL CONSOLIDADO HISTÓRICO</td>
+                    <td class="text-right font-bold">${fmtMoney(tSep25)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tAgo26)}</td>
+                    <td class="text-right font-bold">${fmtMoney(tAgo26 > 0 ? tSep26 : tSep26)}</td>
+                    <td class="text-right font-bold" style="color:${totMomDif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                        ${totMomDif >= 0 ? '+' : ''}${fmtMoney(totMomDif)}
+                    </td>
+                    <td class="text-center font-bold">
+                        ${totMomPct >= 0 ? '+' : ''}${totMomPct.toFixed(1)}%
+                    </td>
+                    <td class="text-center font-bold">
+                        ${totMomFlujoPct >= 0 ? '+' : ''}${totMomFlujoPct.toFixed(1)}%
+                    </td>
+                    <td class="text-right font-bold" style="color:${totYoYDif >= 0 ? 'var(--green-dark)' : 'var(--red-dark)'};">
+                        ${totYoYDif >= 0 ? '+' : ''}${fmtMoney(totYoYDif)}
+                    </td>
+                    <td class="text-center font-bold">
+                        ${totYoYPct >= 0 ? '+' : ''}${totYoYPct.toFixed(1)}%
+                    </td>
+                    <td class="text-center font-bold">
+                        ${totYoYFlujoPct >= 0 ? '+' : ''}${totYoYFlujoPct.toFixed(1)}%
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById('tbodyMoMYoY').innerHTML = rowsHtml;
+        }
+
+        function resetFilters() {
+            document.getElementById('selectZona').value = 'ALL';
+            document.getElementById('selectSupervisor').value = 'ALL';
+            document.getElementById('selectPlaya').value = 'ALL';
+            document.getElementById('selectTipoSede').value = 'ALL';
+            document.getElementById('searchBox').value = '';
+            onZonaChange();
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            const t1 = document.getElementById('tableMacroZonas');
+            const ws1 = XLSX.utils.table_to_sheet(t1);
+            XLSX.utils.book_append_sheet(wb, ws1, "Resumen Zonal");
+
+            const t2 = document.getElementById('tableLineasIngresos');
+            const ws2 = XLSX.utils.table_to_sheet(t2);
+            XLSX.utils.book_append_sheet(wb, ws2, "Líneas de Ingreso");
+
+            const t3 = document.getElementById('tableEventuales');
+            const ws3 = XLSX.utils.table_to_sheet(t3);
+            XLSX.utils.book_append_sheet(wb, ws3, "Eventuales & Operaciones");
+
+            const t4 = document.getElementById('tableMoMYoY');
+            const ws4 = XLSX.utils.table_to_sheet(t4);
+            XLSX.utils.book_append_sheet(wb, ws4, "Crecimiento MoM y YoY");
+
+            XLSX.writeFile(wb, "Apparka_Reporte_Gerencial_EERR_Setiembre_2026.xlsx");
+        }
+
+        // Mostrar / ocultar botón de volver arriba
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('btnScrollTop');
+            if (window.scrollY > 300) {
+                btn.style.display = 'flex';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+
+        // Inicialización reactiva
+        document.addEventListener('DOMContentLoaded', () => {
+            onZonaChange();
+        });
+    </script>
+</body>
+</html>
