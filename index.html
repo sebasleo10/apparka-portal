@@ -12,8 +12,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script src="portal_ppto_data.js?v=1792506717"></script>
-    <script src="portal_comments_data.js?v=1792506717"></script>
+    <script src="portal_ppto_data.js?v=1792507666"></script>
+    <script src="portal_comments_data.js?v=1792507666"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
@@ -1247,9 +1247,9 @@
                     <div class="kpi-sub" id="kpiRealSub">Días evaluados acumulados</div>
                 </div>
                 <div class="kpi-card purple">
-                    <div class="kpi-label">Presupuesto MTD</div>
+                    <div class="kpi-label" id="kpiPptoLabel">Presupuesto del Mes</div>
                     <div class="kpi-val" id="kpiPptoMtd">S/ 0.00</div>
-                    <div class="kpi-sub" id="kpiPptoSub">Meta proporcional acumulada</div>
+                    <div class="kpi-sub" id="kpiPptoSub">Meta oficial del mes</div>
                 </div>
                 <div class="kpi-card green" id="kpiCardDif">
                     <div class="kpi-label" id="kpiDifLabel">Desvío vs PPTO (Proyectado)</div>
@@ -52568,7 +52568,12 @@
             }
 
             let totPptoMes = 0;
-            proyList.forEach(p => totPptoMes += (p.ppto_mes || 0));
+            beaches.forEach(b => {
+                totPptoMes += (b.ppto_mensual || 0);
+            });
+            if (totPptoMes === 0 && proyList.length > 0) {
+                proyList.forEach(p => totPptoMes += (p.ppto_mes || 0));
+            }
 
             const desvioProy = totProy - totPptoMes;
             const pctProy = totPptoMes > 0 ? (totProy / totPptoMes * 100) : 0;
@@ -52591,7 +52596,6 @@
 
             const fmt = n => 'S/ ' + (n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('kpiRealMtd').textContent = fmt(totReal);
-            document.getElementById('kpiPptoMtd').textContent = fmt(totPpto);
 
             const kpiLabelElem = document.getElementById('kpiDifLabel');
             if (kpiLabelElem) kpiLabelElem.textContent = difLabel;
@@ -52599,20 +52603,29 @@
             document.getElementById('kpiPctMtd').textContent = difSub;
             document.getElementById('kpiProyFin').textContent = fmt(totProy);
 
-            // Subtítulos dinámicos de los KPIs según filtro de período
+            // Subtítulos y Labels dinámicos de los KPIs según filtro de período
+            const kpiPptoLabelElem = document.getElementById('kpiPptoLabel');
             if (fechaVal !== 'ALL') {
+                if (kpiPptoLabelElem) kpiPptoLabelElem.textContent = `Presupuesto Día ${fechaVal}`;
+                document.getElementById('kpiPptoMtd').textContent = fmt(totPpto);
                 document.getElementById('kpiRealSub').textContent = `Día ${fechaVal} evaluado`;
                 document.getElementById('kpiPptoSub').textContent = `Meta diaria día ${fechaVal}`;
             } else if (semVal !== 'ALL') {
+                if (kpiPptoLabelElem) kpiPptoLabelElem.textContent = `Presupuesto Semana ${semVal}`;
+                document.getElementById('kpiPptoMtd').textContent = fmt(totPpto);
                 document.getElementById('kpiRealSub').textContent = `Recaudación Semana ${semVal}`;
                 document.getElementById('kpiPptoSub').textContent = `Presupuesto Semana ${semVal}`;
             } else if (diaSemVal !== 'ALL') {
                 const dNombres = { '1': 'Lunes', '2': 'Martes', '3': 'Miércoles', '4': 'Jueves', '5': 'Viernes', '6': 'Sábado', '0': 'Domingo' };
+                if (kpiPptoLabelElem) kpiPptoLabelElem.textContent = `Presupuesto ${dNombres[diaSemVal]}`;
+                document.getElementById('kpiPptoMtd').textContent = fmt(totPpto);
                 document.getElementById('kpiRealSub').textContent = `Todos los ${dNombres[diaSemVal]} evaluados`;
                 document.getElementById('kpiPptoSub').textContent = `Meta de ${dNombres[diaSemVal]} evaluados`;
             } else {
+                if (kpiPptoLabelElem) kpiPptoLabelElem.textContent = 'Presupuesto del Mes';
+                document.getElementById('kpiPptoMtd').textContent = fmt(totPptoMes);
                 document.getElementById('kpiRealSub').textContent = `Días 1 al ${diaCorte} de ${mData.mes_str} (Acumulado)`;
-                document.getElementById('kpiPptoSub').textContent = `Meta proporcional al ${diaCorte} de ${mData.mes_str}`;
+                document.getElementById('kpiPptoSub').textContent = `Meta oficial de ${mData.mes_str} 2026`;
             }
 
             const pSub = document.getElementById('portalSubheader');
